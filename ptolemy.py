@@ -9,12 +9,11 @@ from pygraphviz import *
 import time
 import datetime
 import os.path
+import json
 
 class L1NetworkFlow():
 
 	def get_network_flow(self, connection_data):
-		# temporary variable to print the SRX numbers. Must go with proper impl
-		count = 1
 
 		# A dictionary structure to have Host Names / Mac Addresses as Key and 
 		# LLDP neighbour information as Values.
@@ -41,13 +40,6 @@ class L1NetworkFlow():
 				print "Username : "+ connection["Username"]
 				print "SSH Key Path : "+connection["SSH Key Path"]
 				print "SSH Key :"
-				try:
-					ssh_private_key_file = open(connection["SSH Key Path"], "rU")
-					print ssh_private_key_file.read()
-					ssh_private_key_file.close()
-					print 
-				except IOError:
-					print "Error! Could not open file!"
 			else:
 				dev = Device( user=connection["Username"], host=connection["Hostname"], port=connection["Port"], password=connection["Password"] )
 
@@ -107,18 +99,29 @@ class L1NetworkFlow():
 			lldp_neighbours_dict[host] = neighbour_dict
 			print "LLDP neighbors added for host "+connection["Hostname"]
 			dev.close()
-			count += 1
+		
+		# Write the graph to a dot file
+		graph_file_name = self.get_generated_filename("lldp_neighbours_graph_","dot")
+		lldp_neighbours_graph.write(graph_file_name) # write to simple.dot
+		print "Wrote graph to "+graph_file_name 
 
-		#print(lldp_neighbours_graph.string()) # print to screen
+		# Write the dictionary to a JSON file for better readability
+		json_file_name = self.get_generated_filename("lldp_neighbours_json_","json")
+		# Open the file (w+ creates the file if it doesn't exist)
+		output_file = open(json_file_name,'w+')
+		output_file.write(json.dumps(lldp_neighbours_dict, indent = 4, sort_keys = True))
+		print "Wrote JSON to "+json_file_name 
+
+
+	def get_generated_filename(self,filename, extension):
 		# append the file name with local time stamp
 		timestamp = time.time()
 		stringTimeStamp = datetime.datetime.fromtimestamp(timestamp).strftime('%Y_%m_%d_%H%M%S')
-		filename = "generated"+os.path.sep+"dot"+os.path.sep+"lldp_neighbours_graph_"+stringTimeStamp+".dot"
+		filename = "generated" + os.path.sep + extension + os.path.sep + filename + stringTimeStamp + "." + extension
 		directory = os.path.dirname(filename)
 		if not os.path.exists(directory):
 		    os.makedirs(directory)
-		lldp_neighbours_graph.write(filename) # write to simple.dot
-		print "Wrote "+filename 
+		return filename
 
 
 def main(argv):
