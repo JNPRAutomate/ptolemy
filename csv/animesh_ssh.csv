@@ -1,0 +1,5 @@
+Hostname,Username,Password,SSH Key Path,Port
+127.0.0.1,vagrant,,/Volumes/Macintosh HD/Users/animeshk/_Animesh/Workspaces/Project/ptolemy/ssh/vagrant,8831
+127.0.0.1,vagrant,Juniper,/Volumes/Macintosh HD/Users/animeshk/_Animesh/Workspaces/Project/ptolemy/ssh/vagrant,8832
+127.0.0.1,root,Juniper,/Volumes/Macintosh HD/Users/animeshk/_Animesh/Workspaces/Project/ptolemy/ssh/vagrant,8833
+127.0.0.1,root,Juniper,/Volumes/Macintosh HD/Users/animeshk/_Animesh/Workspaces/Project/ptolemy/ssh/vagrant,8834
