@@ -27,6 +27,7 @@ class L1NetworkFlow():
 		lldp_neighbours_graph.node_attr['fontname']='times'
 
 		for connection in device_data:
+			print "------------------------------------------------------------------------"
 			dev = None
 			# Connect to the device 
 			if not connection["Port"]:
@@ -41,11 +42,12 @@ class L1NetworkFlow():
 
 			print "Host : "+connection["Hostname"]
 
-			dev.open()
-
+			try:
+				dev.open()
+			except:
+				print(traceback.format_exc())
+			
 			print dev.facts
-
-			print "------------------------------------------------------------------------"
 			
 			# Temporary and won't work in actual scenario. Find a way to work with MAC Addresses
 			host = dev.facts["hostname"]
