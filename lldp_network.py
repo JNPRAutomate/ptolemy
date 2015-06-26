@@ -9,7 +9,7 @@ import json
 
 class L1NetworkFlow():
 
-	def get_network_flow(self, connection_data):
+	def get_network_flow(self, device_data):
 
 		# A dictionary structure to have Host Names / Mac Addresses as Key and 
 		# LLDP neighbour information as Values.
@@ -26,7 +26,7 @@ class L1NetworkFlow():
 		lldp_neighbours_graph.node_attr['fillcolor']='yellow'
 		lldp_neighbours_graph.node_attr['fontname']='times'
 
-		for connection in connection_data:
+		for connection in device_data:
 			dev = None
 			# Connect to the device 
 			if not connection["Port"]:
