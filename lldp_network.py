@@ -29,10 +29,12 @@ class L1NetworkFlow():
 
 		for connection in device_data:
 			print "------------------------------------------------------------------------"
+
 			dev = None
 			# Connect to the device 
 			if not connection["Port"]:
 				dev = Device( user=connection["Username"], host=connection["Hostname"], password=connection["Password"] )
+
 			elif connection["SSH Key Path"]:
 				dev = Device( user=connection["Username"], host=connection["Hostname"], ssh_private_key_file=connection["SSH Key Path"], port=connection["Port"] )
 				print "Username : "+ connection["Username"]
@@ -41,21 +43,30 @@ class L1NetworkFlow():
 			else:
 				dev = Device( user=connection["Username"], host=connection["Hostname"], port=connection["Port"], password=connection["Password"] )
 
+
+			# Temporary and won't work in actual scenario. Find a way to work with MAC Addresses
+			host = connection["Hostname"]+connection["Port"]
+
 			print "Host : "+connection["Hostname"]
 
+			connected = False
 			try:
 				dev.open()
+				connected = True
 			except:
 				print(traceback.format_exc())
+				continue
 			
-			print dev.facts
-			
-			# Temporary and won't work in actual scenario. Find a way to work with MAC Addresses
-			host = dev.facts["hostname"]
 			if host not in nodes:
 				nodes.add(host)
 				lldp_neighbours_graph.add_node(host)
-			print "LLDP Neighbours for ", host
+				if not connected:
+					lldp_neighbours_graph.node_attr['fontcolor']='white'
+		            lldp_neighbours_graph.node_attr['fillcolor']='red'
+		            
+			print "LLDP Neighbours for host : "+ connection["Hostname"]+" port : "+connection["Port"]
+			
+			
 			lldp_neighbours = LLDPNeighborTable(dev).get()
 			neighbour_dict = {}
 			print "Local Interface, Parent Interface name, Chassis Id Subtype, Chassis Id, Remote Port Description,System Name"
