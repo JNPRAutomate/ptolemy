@@ -62,8 +62,8 @@ class L1NetworkFlow():
 				lldp_neighbours_graph.add_node(host)
 				if not connected:
 					lldp_neighbours_graph.node_attr['fontcolor']='white'
-		            lldp_neighbours_graph.node_attr['fillcolor']='red'
-		            
+					lldp_neighbours_graph.node_attr['fillcolor']='red'
+
 			print "LLDP Neighbours for host : "+ connection["Hostname"]+" port : "+connection["Port"]
 			
 			
