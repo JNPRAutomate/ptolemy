@@ -1,6 +1,7 @@
 #!/usr/bin/env/python
 
 import csv
+from sys import stdin
 
 device_data = {"data":[]}
 
@@ -12,15 +13,31 @@ class CSVParser:
 			reader = csv.DictReader(f, delimiter=',')
 			for line in reader:
 				device = {}
-				device["Hostname"] = line["Hostname"]
-				device["Username"] = line["Username"]
-				device["Password"] = line["Password"]
+				hostname = line["Hostname"]
+				device["Hostname"] = hostname
+				username = line["Username"]
+				device["Username"] = username
+				#check if password is given or you need to enter it
+				password = line["Password"]
+				if password is not "!!PROMPT!!":
+					password = self.get_password(hostname,username)
+				else:
+					device["Password"] = password
 				device["SSH Key Path"] = line["SSH Key Path"]
 				device["Port"] = line["Port"]
 				device_data["data"].append(device)
 			f.close()
 			print "CSV file "+file_name+ " parsed"
 			return device_data["data"]
+
+	def get_password(self,hostname,username):
+		print 'Enter password associated with Hostname: '+hostname+' and Username: '+username
+		password = stdin.readline()
+		if not password:
+			print "Password can't be empty. Please re-enter you password."
+			return self.get_password(self,hostname,username)
+
+		return password
 
 
 
