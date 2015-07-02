@@ -27,18 +27,6 @@ def main(argv):
 	network = L1NetworkFlow()
 	network.get_network_flow(connection_data)
 
-
-# def breadth_first_search(node):
-# 	visited, queue = set(), [start]
-# 	while queue:
-#         vertex = queue.pop(0)
-#         if vertex not in visited:
-#             visited.add(vertex)
-#             queue.extend(graph[vertex] - visited)
-#     return visited
-
-
-
 if __name__ == "__main__":
     main(sys.argv[1:])
 

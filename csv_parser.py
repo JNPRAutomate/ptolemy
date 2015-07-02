@@ -28,7 +28,6 @@ class CSVParser:
 				device["Port"] = line["Port"]
 				device_data["data"].append(device)
 			f.close()
-			print "CSV file "+file_name+ " parsed"
 			return device_data["data"]
 
 	def get_password(self,hostname,username):

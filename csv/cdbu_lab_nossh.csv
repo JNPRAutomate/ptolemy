@@ -1,5 +1,5 @@
 Hostname,Username,Password,SSH Key Path,Port
-cdbu-sol-vcf-5100-24q-01@dcbg.juniper.net,root,!!PROMPT!!,,   
+cdbu-sol-vcf-5100-24q-01.dcbg@juniper.net,root,!!PROMPT!!,,   
 cdbu-sol-vcf-5100-24q-02@dcbg.juniper.net,root,!!PROMPT!!,,    
 cdbu-sol-vcf-5100-24q-03@dcbg.juniper.net,root,!!PROMPT!!,,   
 cdbu-sol-vcf-5100-24q-04@dcbg.juniper.net,root,!!PROMPT!!,,    

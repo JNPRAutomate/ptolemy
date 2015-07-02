@@ -29,13 +29,18 @@ class L1NetworkFlow():
 
 		for connection in device_data:
 			print "------------------------------------------------------------------------"
+			print ''
 
 			dev = None
-			# Connect to the device 
+			# Connect to the device
+			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Connecting to "+connection["Hostname"]
 			if connection["SSH Key Path"]:
 				dev = self.get_device(connection["Username"], connection["Hostname"], connection["SSH Key Path"], connection["Port"] )
 			else:
 				dev = self.get_device(connection["Username"], connection["Hostname"], connection["Port"], connection["Password"] )
+
+			
+			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Waiting for connections to establish..."
 
 			connected = False
 			try:
@@ -43,14 +48,15 @@ class L1NetworkFlow():
 				connected = True
 				# Temporary and won't work in actual scenario. Find a way to work with MAC Addresses or something that is unique in actual campus network for devices
 				host = dev.facts["hostname"]
+				print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connected"
 			except:
 				print(traceback.format_exc())
 				host = connection["Hostname"]
-
+				print "ERROR["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connection failed"
 			
 			
 
-			print "Host : "+host
+			print "Source System Name : "+host
 
 			if host not in nodes:
 				nodes.add(host)
@@ -105,19 +111,20 @@ class L1NetworkFlow():
 		# get the lldp neighbors
 		lldp_neighbours = self.get_lldp_neighbors(dev)
 		host = dev.facts["hostname"]
-		
+
 		neighbour_dict = {}
 		for neighbour in lldp_neighbours:
+			neighbour_info = {}
 			print ''
-			neighbour_dict["local_int"] = neighbour.local_int
-			neighbour_dict["local_parent"] = neighbour.local_parent
-			neighbour_dict["remote_type"] = neighbour.remote_type
-			neighbour_dict["remote_chassis_id"] = neighbour.remote_chassis_id
-			neighbour_dict["remote_port_desc"] = neighbour.remote_port_desc
-			neighbour_dict["remote_sysname"] = neighbour.remote_sysname
+			neighbour_info["local_int"] = neighbour.local_int
+			neighbour_info["local_parent"] = neighbour.local_parent
+			neighbour_info["remote_type"] = neighbour.remote_type
+			neighbour_info["remote_chassis_id"] = neighbour.remote_chassis_id
+			neighbour_info["remote_port_desc"] = neighbour.remote_port_desc
+			neighbour_info["remote_sysname"] = neighbour.remote_sysname
 
 			# print the values on the screen
-			print "System Name:", neighbour.remote_sysname
+			print "Destination System Name:", neighbour.remote_sysname
 			print "Port Descriptione:" , neighbour.remote_port_desc
 			print "Local Interface:", neighbour.local_int
 			print "Parent Interface Name:" , neighbour.local_parent
@@ -142,15 +149,22 @@ class L1NetworkFlow():
 			lldp_neighbours_graph.get_edge(source,destination).attr['style'] = 'bold'
 			lldp_neighbours_graph.get_edge(source,destination).attr['color'] = 'blue'
 
+			#Add this to neighbor dictionary
+			neighbour_dict["Destination System: "+neighbour.remote_sysname] = neighbour_info
+
 		return neighbour_dict
 
 
 	def get_generated_filename(self,filename, extension):
 		# append the file name with local time stamp
-		timestamp = time.time()
-		stringTimeStamp = datetime.datetime.fromtimestamp(timestamp).strftime('%Y_%m_%d_%H%M%S')
+		stringTimeStamp = self.get_timestamp('%Y_%m_%d_%H%M%S')
 		filename = "generated" + os.path.sep + extension + os.path.sep + filename + stringTimeStamp + "." + extension
 		directory = os.path.dirname(filename)
 		if not os.path.exists(directory):
 		    os.makedirs(directory)
 		return filename
+
+	def get_timestamp(self,stringFormat):
+		timestamp = time.time()
+		stringTimeStamp = datetime.datetime.fromtimestamp(timestamp).strftime(stringFormat)
+		return stringTimeStamp
