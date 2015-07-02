@@ -1,7 +1,7 @@
 #!/usr/bin/env/python
 
 import csv
-from sys import stdin
+import getpass
 
 device_data = {"data":[]}
 
@@ -19,10 +19,11 @@ class CSVParser:
 				device["Username"] = username
 				#check if password is given or you need to enter it
 				password = line["Password"]
-				if password is not "!!PROMPT!!":
+				print password
+				if password == "!!PROMPT!!":
+					print "Entered"
 					password = self.get_password(hostname,username)
-				else:
-					device["Password"] = password
+				device["Password"] = password
 				device["SSH Key Path"] = line["SSH Key Path"]
 				device["Port"] = line["Port"]
 				device_data["data"].append(device)
@@ -31,8 +32,8 @@ class CSVParser:
 			return device_data["data"]
 
 	def get_password(self,hostname,username):
-		print 'Enter password associated with Hostname: '+hostname+' and Username: '+username
-		password = stdin.readline()
+		print 'Enter password associated with Hostname: '+hostname+' and Username: '+username 
+		password = getpass.getpass()
 		if not password:
 			print "Password can't be empty. Please re-enter you password."
 			return self.get_password(self,hostname,username)
