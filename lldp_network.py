@@ -6,7 +6,7 @@ import datetime
 import os.path
 import json
 import traceback
-
+from pprint import pprint
 
 class L1NetworkFlow():
 
@@ -35,9 +35,11 @@ class L1NetworkFlow():
 			# Connect to the device
 			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Connecting to "+connection["Hostname"]
 			if connection["SSH Key Path"]:
-				dev = self.get_device(connection["Username"], connection["Hostname"], connection["SSH Key Path"], connection["Port"] )
+				dev = self.get_device(connection["Username"], connection["Password"],connection["Hostname"], connection["SSH Key Path"], connection["Port"] )
+				print "SSH used"
 			else:
-				dev = self.get_device(connection["Username"], connection["Hostname"], connection["Port"], connection["Password"] )
+				dev = self.get_device_nossh(connection["Username"], connection["Hostname"], connection["Port"], connection["Password"] )
+				print "Password Used"
 
 			
 			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Waiting for connections to establish..."
@@ -87,15 +89,17 @@ class L1NetworkFlow():
 		output_file.write(json.dumps(lldp_neighbours_dict, indent = 4, sort_keys = True))
 		print "Wrote JSON to "+json_file_name
 
-	def get_device(self,username,hostname,password,portNumber):
+	def get_device_nossh(self,username,hostname,portNumber,password):
+		print "Using Password :" + password
 		if not portNumber:
 			dev = Device( user=username, host=hostname, password=password )
 		else:
+			print "Connect to Port : "+portNumber
 			dev = Device( user=username, host=hostname, password=password, port=portNumber )
 		print "Username : "+ username
 		return dev
 
-	def get_device(self,username,hostname,ssh_private_key_file_path,portNumber):
+	def get_device(self,username,hostname,password,ssh_private_key_file_path,portNumber):
 		if not portNumber:
 			dev = Device( user=username, host=hostname, ssh_private_key_file=ssh_private_key_file_path)
 		else:
@@ -111,9 +115,13 @@ class L1NetworkFlow():
 		# get the lldp neighbors
 		lldp_neighbours = self.get_lldp_neighbors(dev)
 		host = dev.facts["hostname"]
+		pprint (dev.rpc.get_lldp_neighbors_information())
 
 		neighbour_dict = {}
 		for neighbour in lldp_neighbours:
+			#pprint (neighbour.keys())
+			#pprint (neighbour.values())
+
 			neighbour_info = {}
 			print ''
 			neighbour_info["local_int"] = neighbour.local_int
@@ -122,6 +130,7 @@ class L1NetworkFlow():
 			neighbour_info["remote_chassis_id"] = neighbour.remote_chassis_id
 			neighbour_info["remote_port_desc"] = neighbour.remote_port_desc
 			neighbour_info["remote_sysname"] = neighbour.remote_sysname
+			#neighbour_info["remote_port_id"] = neighbour.port_info
 
 			# print the values on the screen
 			print "Destination System Name:", neighbour.remote_sysname
@@ -141,11 +150,13 @@ class L1NetworkFlow():
 			source = lldp_neighbours_graph.get_node(host)
 			destination = lldp_neighbours_graph.get_node(neighbour.remote_sysname)
 			# Add data to the labels
-			destination.attr['label'] = "< System Name: "+neighbour.remote_sysname +"<br/>Port Description: " + neighbour.remote_port_desc+"<br/>Local Interface: "+ neighbour.local_int+"<br/>Parent Interface Name: " + neighbour.local_parent+"<br/>Chassis Id: "+ neighbour.remote_chassis_id+"<br/>Chassis Id Subtype: " + neighbour.remote_type+"<br/> >"
+			#destination.attr['label'] = "< System Name: "+neighbour.remote_sysname +"<br/>Remote Port Description: " + neighbour.remote_port_desc+"<br/>Local Interface: "+ neighbour.local_int+"<br/> >"
+			destination.attr['label'] ="System Name: "+neighbour.remote_sysname
 			destination.attr['labelloc'] = 'b'
 			lldp_neighbours_graph.add_edge(source,destination)
 			lldp_neighbours_graph.get_edge(source,destination).attr['dir'] = 'both'
-			lldp_neighbours_graph.get_edge(source,destination).attr['taillabel'] = neighbour.remote_port_desc
+			#lldp_neighbours_graph.get_edge(source,destination).attr['taillabel'] = neighbour.port_info
+			lldp_neighbours_graph.get_edge(source,destination).attr['headlabel'] = neighbour.local_int
 			lldp_neighbours_graph.get_edge(source,destination).attr['style'] = 'bold'
 			lldp_neighbours_graph.get_edge(source,destination).attr['color'] = 'blue'
 
