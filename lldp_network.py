@@ -118,7 +118,9 @@ class L1NetworkFlow():
 			for detail in neighbour_details:
 				if detail.tag == 'lldp-remote-system-name':
 					neighbour_info["Remote System Name"] = detail.text
-				elif detail.tag == 'lldp-remote-port-id':
+				elif detail.tag == 'lldp-remote-port-id' or detail.tag == 'lldp-remote-port-description':
+					# Above if statement in a Hack since some of the systems has lldp-remote-port-id and 
+					# some have lldp-remote-port-description as their remote port identification
 					neighbour_info["Remote Port Id"] = detail.text
 				elif detail.tag == 'lldp-local-port-id':
 					neighbour_info["Local Port Id"] = detail.text
@@ -126,7 +128,7 @@ class L1NetworkFlow():
 					neighbour_info["Local Parent Interface Name"] = detail.text
 				elif detail.tag == 'lldp-remote-chassis-id':
 					neighbour_info["Remote Chassis Id"] = detail.text
-				elif detail.tag == 'lldp-remote-port-id-subtype':
+				elif detail.tag == 'lldp-remote-port-id-subtype' or detail.tag == 'lldp-remote-chassis-id-subtype':
 					neighbour_info["Remote Port Id Subtype"] = detail.text
 
 			# print the values on the screen
