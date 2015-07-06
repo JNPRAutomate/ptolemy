@@ -7,6 +7,7 @@ import os.path
 import json
 import traceback
 from pprint import pprint
+import xml.etree.cElementTree as ET
 
 class L1NetworkFlow():
 
@@ -113,55 +114,60 @@ class L1NetworkFlow():
 
 	def generate_graph(self, dev,nodes,lldp_neighbours_graph):
 		# get the lldp neighbors
-		lldp_neighbours = self.get_lldp_neighbors(dev)
+		#lldp_neighbours = self.get_lldp_neighbors(dev)
 		host = dev.facts["hostname"]
-		pprint (dev.rpc.get_lldp_neighbors_information())
-
+		lldp_neighbours_information = dev.rpc.get_lldp_neighbors_information()
+		lldp_neighbours = lldp_neighbours_information.getchildren()
 		neighbour_dict = {}
 		for neighbour in lldp_neighbours:
-			#pprint (neighbour.keys())
-			#pprint (neighbour.values())
-
 			neighbour_info = {}
-			print ''
-			neighbour_info["local_int"] = neighbour.local_int
-			neighbour_info["local_parent"] = neighbour.local_parent
-			neighbour_info["remote_type"] = neighbour.remote_type
-			neighbour_info["remote_chassis_id"] = neighbour.remote_chassis_id
-			neighbour_info["remote_port_desc"] = neighbour.remote_port_desc
-			neighbour_info["remote_sysname"] = neighbour.remote_sysname
-			#neighbour_info["remote_port_id"] = neighbour.port_info
+			neighbour_details = neighbour.getchildren()
+			for detail in neighbour_details:
+				if detail.tag == 'lldp-remote-system-name':
+					neighbour_info["Remote System Name"] = detail.text
+				elif detail.tag == 'lldp-remote-port-id':
+					neighbour_info["Remote Port Id"] = detail.text
+				elif detail.tag == 'lldp-local-port-id':
+					neighbour_info["Local Port Id"] = detail.text
+				elif detail.tag == 'lldp-local-parent-interface-name':
+					neighbour_info["Local Parent Interface Name"] = detail.text
+				elif detail.tag == 'lldp-remote-chassis-id':
+					neighbour_info["Remote Chassis Id"] = detail.text
+				elif detail.tag == 'lldp-remote-port-id-subtype':
+					neighbour_info["Remote Port Id Subtype"] = detail.text
 
 			# print the values on the screen
-			print "Destination System Name:", neighbour.remote_sysname
-			print "Port Descriptione:" , neighbour.remote_port_desc
-			print "Local Interface:", neighbour.local_int
-			print "Parent Interface Name:" , neighbour.local_parent
-			print "Chassis Id:", neighbour.remote_chassis_id
-			print "Chassis Id Subtype:" , neighbour.remote_type
+			print "Destination System Name:", neighbour_info["Remote System Name"]
+			print "Remote Port Id:" , neighbour_info["Remote Port Id"]
+			print "Local Port Id:", neighbour_info["Local Port Id"]
+			print "Local Parent Interface Name:" , neighbour_info["Local Parent Interface Name"]
+			print "Remote Chassis Id:", neighbour_info["Remote Chassis Id"]
+			print "Remote Chassis Id Subtype:" , neighbour_info["Remote Port Id Subtype"]
 			print ''
-			
+
+			remote_sysname = neighbour_info["Remote System Name"]
+			print "[VERBOSE]: "+remote_sysname
 			# Add node to create edge if it doesn't exist
-			if neighbour.remote_sysname not in nodes:
-				nodes.add(neighbour.remote_sysname)
-				lldp_neighbours_graph.add_node(neighbour.remote_sysname)
+			if remote_sysname not in nodes:
+				nodes.add(remote_sysname)
+				lldp_neighbours_graph.add_node(remote_sysname)
 
 			# Create an edge between host and neighbour
 			source = lldp_neighbours_graph.get_node(host)
-			destination = lldp_neighbours_graph.get_node(neighbour.remote_sysname)
+			destination = lldp_neighbours_graph.get_node(remote_sysname)
 			# Add data to the labels
 			#destination.attr['label'] = "< System Name: "+neighbour.remote_sysname +"<br/>Remote Port Description: " + neighbour.remote_port_desc+"<br/>Local Interface: "+ neighbour.local_int+"<br/> >"
-			destination.attr['label'] ="System Name: "+neighbour.remote_sysname
+			destination.attr['label'] ="System Name: "+remote_sysname
 			destination.attr['labelloc'] = 'b'
 			lldp_neighbours_graph.add_edge(source,destination)
 			lldp_neighbours_graph.get_edge(source,destination).attr['dir'] = 'both'
-			#lldp_neighbours_graph.get_edge(source,destination).attr['taillabel'] = neighbour.port_info
-			lldp_neighbours_graph.get_edge(source,destination).attr['headlabel'] = neighbour.local_int
+			lldp_neighbours_graph.get_edge(source,destination).attr['taillabel'] = neighbour_info["Remote Port Id"] 
+			lldp_neighbours_graph.get_edge(source,destination).attr['headlabel'] = neighbour_info["Local Port Id"]
 			lldp_neighbours_graph.get_edge(source,destination).attr['style'] = 'bold'
 			lldp_neighbours_graph.get_edge(source,destination).attr['color'] = 'blue'
 
 			#Add this to neighbor dictionary
-			neighbour_dict["Destination System: "+neighbour.remote_sysname] = neighbour_info
+			neighbour_dict["Destination System: "+remote_sysname] = neighbour_info
 
 		return neighbour_dict
 
