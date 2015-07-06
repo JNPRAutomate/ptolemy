@@ -21,11 +21,10 @@ class L1NetworkFlow():
 
 		# set some default node attributes
 		#def set_default_attributes:
-		lldp_neighbours_graph.node_attr['style']='rounded,filled'
+		lldp_neighbours_graph.node_attr['style']='rounded'
 		lldp_neighbours_graph.node_attr['shape']='box'
 		lldp_neighbours_graph.node_attr['fixedsize']='false'
-		lldp_neighbours_graph.node_attr['fontcolor']='red'
-		lldp_neighbours_graph.node_attr['fillcolor']='yellow'
+		lldp_neighbours_graph.node_attr['fontcolor']='purple'
 		lldp_neighbours_graph.node_attr['fontname']='times'
 
 		for connection in device_data:
@@ -37,10 +36,8 @@ class L1NetworkFlow():
 			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Connecting to "+connection["Hostname"]
 			if connection["SSH Key Path"]:
 				dev = self.get_device(connection["Username"], connection["Password"],connection["Hostname"], connection["SSH Key Path"], connection["Port"] )
-				print "SSH used"
 			else:
 				dev = self.get_device_nossh(connection["Username"], connection["Hostname"], connection["Port"], connection["Password"] )
-				print "Password Used"
 
 			
 			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Waiting for connections to establish..."
@@ -57,8 +54,6 @@ class L1NetworkFlow():
 				host = connection["Hostname"]
 				print "ERROR["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connection failed"
 			
-			
-
 			print "Source System Name : "+host
 
 			if host not in nodes:
@@ -91,7 +86,6 @@ class L1NetworkFlow():
 		print "Wrote JSON to "+json_file_name
 
 	def get_device_nossh(self,username,hostname,portNumber,password):
-		print "Using Password :" + password
 		if not portNumber:
 			dev = Device( user=username, host=hostname, password=password )
 		else:
@@ -106,7 +100,6 @@ class L1NetworkFlow():
 		else:
 			dev = Device( user=username, host=hostname, ssh_private_key_file=ssh_private_key_file_path, port=portNumber )
 		print "Username : "+ username
-		print "SSH Key Path : "+ssh_private_key_file_path
 		return dev
 
 	def get_lldp_neighbors(self,dev):
@@ -146,7 +139,6 @@ class L1NetworkFlow():
 			print ''
 
 			remote_sysname = neighbour_info["Remote System Name"]
-			print "[VERBOSE]: "+remote_sysname
 			# Add node to create edge if it doesn't exist
 			if remote_sysname not in nodes:
 				nodes.add(remote_sysname)
@@ -157,8 +149,8 @@ class L1NetworkFlow():
 			destination = lldp_neighbours_graph.get_node(remote_sysname)
 			# Add data to the labels
 			#destination.attr['label'] = "< System Name: "+neighbour.remote_sysname +"<br/>Remote Port Description: " + neighbour.remote_port_desc+"<br/>Local Interface: "+ neighbour.local_int+"<br/> >"
-			destination.attr['label'] ="System Name: "+remote_sysname
-			destination.attr['labelloc'] = 'b'
+			destination.attr['label'] = remote_sysname
+			destination.attr['labelloc'] = 'c'
 			lldp_neighbours_graph.add_edge(source,destination)
 			lldp_neighbours_graph.get_edge(source,destination).attr['dir'] = 'both'
 			lldp_neighbours_graph.get_edge(source,destination).attr['taillabel'] = neighbour_info["Remote Port Id"] 

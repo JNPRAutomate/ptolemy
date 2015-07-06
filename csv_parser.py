@@ -19,9 +19,7 @@ class CSVParser:
 				device["Username"] = username
 				#check if password is given or you need to enter it
 				password = line["Password"]
-				print password
 				if password == "!!PROMPT!!":
-					print "Entered"
 					password = self.get_password(hostname,username)
 				device["Password"] = password
 				device["SSH Key Path"] = line["SSH Key Path"]
