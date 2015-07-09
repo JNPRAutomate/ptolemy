@@ -1,5 +1,0 @@
-Hostname,Username,Password,SSH Key Path,Port
-127.0.0.1,vagrant,vagrant,,8831
-127.0.0.1,root,Juniper,,8832
-127.0.0.1,root,Juniper,,8833
-127.0.0.1,root,Juniper,,8834
