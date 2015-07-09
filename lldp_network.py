@@ -8,24 +8,16 @@ import json
 import traceback
 from pprint import pprint
 import xml.etree.cElementTree as ET
+import socket
 
 class L1NetworkFlow():
 
+
+	def __init__(self):
+		self.lldp_neighbours_dict = {}
+		self.live_nodes = set()
+
 	def get_network_flow(self, device_data):
-
-		# A dictionary structure to have Host Names / Mac Addresses as Key and 
-		# LLDP neighbour information as Values.
-		lldp_neighbours_dict = {}
-		lldp_neighbours_graph = AGraph()
-		nodes = set()
-
-		# set some default node attributes
-		#def set_default_attributes:
-		lldp_neighbours_graph.node_attr['style']='rounded'
-		lldp_neighbours_graph.node_attr['shape']='box'
-		lldp_neighbours_graph.node_attr['fixedsize']='false'
-		lldp_neighbours_graph.node_attr['fontcolor']='purple'
-		lldp_neighbours_graph.node_attr['fontname']='times'
 
 		for connection in device_data:
 			print "------------------------------------------------------------------------"
@@ -42,48 +34,41 @@ class L1NetworkFlow():
 			
 			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Waiting for connections to establish..."
 
-			connected = False
+			# !!!!!NOT ALL Systems have Reverse DNS Lookup- Won't work.
+			# Reverse DNS look up each node and get it's hostname
+			#host_add = connection["Hostname"]
+			#host = socket.gethostbyaddr(host_add)
+			#self.nodes.add(host)
+			host = connection["Hostname"]
 			try:
 				dev.open()
-				connected = True
-				# Temporary and won't work in actual scenario. Find a way to work with MAC Addresses or something that is unique in actual campus network for devices
 				host = dev.facts["hostname"]
+				self.live_nodes.add(host)
+				# Temporary and won't work in actual scenario. Find a way to work with MAC Addresses or something that is unique in actual campus network for devices
 				print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connected"
 			except:
 				print(traceback.format_exc())
-				host = connection["Hostname"]
 				print "ERROR["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connection failed"
-			
-			print "Source System Name : "+host
-
-			if host not in nodes:
-				nodes.add(host)
-				lldp_neighbours_graph.add_node(host)
-				if not connected:
-					lldp_neighbours_graph.node_attr['fontcolor']='white'
-					lldp_neighbours_graph.node_attr['fillcolor']='red'
-					continue
+				continue
+				
+			print "Source System Name : "+ host
 
 			print "LLDP Neighbours for host : "+ connection["Hostname"]+" port : "+connection["Port"]
 			
-			neighbour_dict = self.generate_graph(dev,nodes,lldp_neighbours_graph)
+			neighbour_dict = self.get_lldp_neighbors(dev)
 
 			# Store the values in the dictionary
-			lldp_neighbours_dict[host] = neighbour_dict
+			self.lldp_neighbours_dict[host] = neighbour_dict
 			print "LLDP neighbors added for host "+connection["Hostname"]
 			dev.close()
 		
-		# Write the graph to a dot file
-		graph_file_name = self.get_generated_filename("lldp_neighbours_graph_","dot")
-		lldp_neighbours_graph.write(graph_file_name) # write to simple.dot
-		print "Wrote graph to "+graph_file_name 
 
-		# Write the dictionary to a JSON file for better readability
-		json_file_name = self.get_generated_filename("lldp_neighbours_json_","json")
-		# Open the file (w+ creates the file if it doesn't exist)
-		output_file = open(json_file_name,'w+')
-		output_file.write(json.dumps(lldp_neighbours_dict, indent = 4, sort_keys = True))
-		print "Wrote JSON to "+json_file_name
+		#Generate the JSON file from the Dictionary
+		self.write_json(self.lldp_neighbours_dict)
+
+		#Generate the graph from the datastructures generated
+		self.generate_graph(self.lldp_neighbours_dict,self.live_nodes)
+
 
 	def get_device_nossh(self,username,hostname,portNumber,password):
 		if not portNumber:
@@ -103,9 +88,6 @@ class L1NetworkFlow():
 		return dev
 
 	def get_lldp_neighbors(self,dev):
-		return LLDPNeighborTable(dev).get()
-
-	def generate_graph(self, dev,nodes,lldp_neighbours_graph):
 		# get the lldp neighbors
 		#lldp_neighbours = self.get_lldp_neighbors(dev)
 		host = dev.facts["hostname"]
@@ -140,31 +122,47 @@ class L1NetworkFlow():
 			print "Remote Chassis Id Subtype:" , neighbour_info["Remote Port Id Subtype"]
 			print ''
 
-			remote_sysname = neighbour_info["Remote System Name"]
-			# Add node to create edge if it doesn't exist
-			if remote_sysname not in nodes:
-				nodes.add(remote_sysname)
-				lldp_neighbours_graph.add_node(remote_sysname)
-
-			# Create an edge between host and neighbour
-			source = lldp_neighbours_graph.get_node(host)
-			destination = lldp_neighbours_graph.get_node(remote_sysname)
-			# Add data to the labels
-			#destination.attr['label'] = "< System Name: "+neighbour.remote_sysname +"<br/>Remote Port Description: " + neighbour.remote_port_desc+"<br/>Local Interface: "+ neighbour.local_int+"<br/> >"
-			destination.attr['label'] = remote_sysname
-			destination.attr['labelloc'] = 'c'
-			lldp_neighbours_graph.add_edge(source,destination)
-			lldp_neighbours_graph.get_edge(source,destination).attr['dir'] = 'both'
-			lldp_neighbours_graph.get_edge(source,destination).attr['taillabel'] = neighbour_info["Remote Port Id"] 
-			lldp_neighbours_graph.get_edge(source,destination).attr['headlabel'] = neighbour_info["Local Port Id"]
-			lldp_neighbours_graph.get_edge(source,destination).attr['style'] = 'bold'
-			lldp_neighbours_graph.get_edge(source,destination).attr['color'] = 'blue'
-
 			#Add this to neighbor dictionary
-			neighbour_dict["Destination System: "+remote_sysname] = neighbour_info
+			neighbour_dict["Destination System: "+neighbour_info["Remote Port Id"]] = neighbour_info
 
 		return neighbour_dict
 
+	def generate_graph(self, dictionary, live_nodes):
+		lldp_neighbours_graph = AGraph(strict = False)
+		# Set the style attributes of the graph
+		lldp_neighbours_graph.node_attr['style']='rounded'
+		lldp_neighbours_graph.node_attr['shape']='box'
+		lldp_neighbours_graph.node_attr['fixedsize']='false'
+		lldp_neighbours_graph.node_attr['labelloc']='c'
+		lldp_neighbours_graph.node_attr['fontname']='times'
+		lldp_neighbours_graph.node_attr['fontcolor']='purple'
+
+		# Get the data from the dictionary and work on in
+		for source in dictionary.keys():
+			# Create an edge between host and neighbour
+			destination_systems = dictionary[source]
+			for remote_sysname in destination_systems.keys():
+				print "Remote System :" + remote_sysname
+				remote = destination_systems[remote_sysname]
+				destination = remote["Remote System Name"] 
+					
+				pprint(live_nodes)
+				print "Source : "+source + ", Destination : "+destination
+				local_port = remote["Local Port Id"]
+				print local_port
+				remote_port = remote["Remote Port Id"] 
+				print remote_port
+				key_str = local_port+"_"+remote_port
+				print key_str
+				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both',taillabel=remote_port,headlabel=local_port,style='bold',color='blue')
+				print lldp_neighbours_graph.is_strict()
+				# Check if the node is live or dead and update the attribute if needed
+				if destination not in live_nodes:
+					node = lldp_neighbours_graph.get_node(destination)
+					node.attr['fontcolor'] = 'red'
+
+		# Generate the graph once the whole topology is parsed
+		self.write_graph(lldp_neighbours_graph)
 
 	def get_generated_filename(self,filename, extension):
 		# append the file name with local time stamp
@@ -179,3 +177,18 @@ class L1NetworkFlow():
 		timestamp = time.time()
 		stringTimeStamp = datetime.datetime.fromtimestamp(timestamp).strftime(stringFormat)
 		return stringTimeStamp
+
+	def write_graph(self, graph):
+		# Write the graph to a dot file
+		graph_file_name = self.get_generated_filename("lldp_neighbours_graph_","dot")
+		graph.write(graph_file_name) # write to simple.dot
+		print "Wrote graph to "+graph_file_name 
+
+
+	def write_json(self, dictionary):
+		# Write the dictionary to a JSON file for better readability
+		json_file_name = self.get_generated_filename("lldp_neighbours_json_","json")
+		# Open the file (w+ creates the file if it doesn't exist)
+		output_file = open(json_file_name,'w+')
+		output_file.write(json.dumps(dictionary, indent = 4, sort_keys = True))
+		print "Wrote JSON to "+json_file_name
