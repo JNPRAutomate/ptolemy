@@ -71,6 +71,8 @@ class L1NetworkFlow():
 
 
 	def get_device_nossh(self,username,hostname,portNumber,password):
+		# trim the whitespaces
+		portNumber = portNumber.strip()
 		if not portNumber:
 			dev = Device( user=username, host=hostname, password=password )
 		else:
