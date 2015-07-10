@@ -9,6 +9,8 @@
 
 # Usage
 
+NOTE : Devices which the script attempts to connect must have NETCONF enabled on the specified port or the default port
+
 ```
 python ptolemy.py -f <csv_file_path>
 
@@ -17,10 +19,10 @@ The program currently supports only device information in form of a CSV.
 ```
 
 A valid CSV will have:-
-1) Hostname
-2) Username
-3) Password or SSH Key Path or both
-4) Port Number (optional)
+1) Hostname<br/>
+2) Username<br/>
+3) Password or SSH Key Path or both<br/>
+4) Port Number (optional)<br/>
 
 Sample CSV
 
