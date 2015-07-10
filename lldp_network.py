@@ -59,7 +59,7 @@ class L1NetworkFlow():
 
 			# Store the values in the dictionary
 			self.lldp_neighbours_dict[host] = neighbour_dict
-			print "LLDP neighbors added for host "+connection["Hostname"]
+			print "LLDP neighbors retrieved for host "+connection["Hostname"]
 			dev.close()
 		
 
@@ -128,7 +128,7 @@ class L1NetworkFlow():
 		return neighbour_dict
 
 	def generate_graph(self, dictionary, live_nodes):
-		lldp_neighbours_graph = AGraph(strict = False)
+		lldp_neighbours_graph = AGraph(strict = False, directed = True)
 		# Set the style attributes of the graph
 		lldp_neighbours_graph.node_attr['style']='rounded'
 		lldp_neighbours_graph.node_attr['shape']='box'
@@ -142,25 +142,16 @@ class L1NetworkFlow():
 			# Create an edge between host and neighbour
 			destination_systems = dictionary[source]
 			for remote_sysname in destination_systems.keys():
-				print "Remote System :" + remote_sysname
 				remote = destination_systems[remote_sysname]
 				destination = remote["Remote System Name"] 
-					
-				pprint(live_nodes)
-				print "Source : "+source + ", Destination : "+destination
 				local_port = remote["Local Port Id"]
-				print local_port
 				remote_port = remote["Remote Port Id"] 
-				print remote_port
 				key_str = local_port+"_"+remote_port
-				print key_str
 				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both',taillabel=remote_port,headlabel=local_port,style='bold',color='blue')
-				print lldp_neighbours_graph.is_strict()
 				# Check if the node is live or dead and update the attribute if needed
 				if destination not in live_nodes:
 					node = lldp_neighbours_graph.get_node(destination)
 					node.attr['fontcolor'] = 'red'
-
 		# Generate the graph once the whole topology is parsed
 		self.write_graph(lldp_neighbours_graph)
 
@@ -182,6 +173,7 @@ class L1NetworkFlow():
 		# Write the graph to a dot file
 		graph_file_name = self.get_generated_filename("lldp_neighbours_graph_","dot")
 		graph.write(graph_file_name) # write to simple.dot
+		print ''
 		print "Wrote graph to "+graph_file_name 
 
 
@@ -191,4 +183,5 @@ class L1NetworkFlow():
 		# Open the file (w+ creates the file if it doesn't exist)
 		output_file = open(json_file_name,'w+')
 		output_file.write(json.dumps(dictionary, indent = 4, sort_keys = True))
+		print ''
 		print "Wrote JSON to "+json_file_name
