@@ -4,7 +4,7 @@
 1) Make sure you have Python installed on your machine (Preferred version is 2.7.x). <br/>
   Python 3 and above is not supported.<br/>
    [How to Install](https://wiki.python.org/moin/BeginnersGuide/Download)<br/>
-2) Install Graphviz (Preferred version is graphviz-2.36 since graphviz-2.39 has few bugs) and Pygraphviz for graph diagrams.<br/>
+2) Install Graphviz (Preferred version is graphviz-2.38 since graphviz-2.39 has few bugs) and Pygraphviz for graph diagrams.<br/>
    [Graphviz Installation ](http://www.graphviz.org/Download..php) and [PyGraphviz Installation] (http://pygraphviz.github.io/documentation/pygraphviz-1.3rc1/install.html)<br/>
 
 # Usage
