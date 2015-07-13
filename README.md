@@ -31,6 +31,6 @@ Hostname,Username,Password,SSH Key Path,Port
 172.21.202.36,animesh,abc@123,/home/vagrant/code/ptolemy/ssh/vagrant,830
 ```
 
-# Issues
+# Known Issues
 - No Support for Python 3
 - Issues with graphviz-2.39
