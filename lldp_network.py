@@ -9,6 +9,7 @@ import traceback
 from pprint import pprint
 import xml.etree.cElementTree as ET
 import socket
+from jnpr.junos.exception import RpcError
 
 class L1NetworkFlow():
 
@@ -93,44 +94,51 @@ class L1NetworkFlow():
 		# get the lldp neighbors
 		#lldp_neighbours = self.get_lldp_neighbors(dev)
 		host = dev.facts["hostname"]
-		lldp_neighbours_information = dev.rpc.get_lldp_neighbors_information()
-		lldp_neighbours = lldp_neighbours_information.getchildren()
 		neighbour_dict = {}
-		for neighbour in lldp_neighbours:
-			neighbour_info = {}
-			neighbour_details = neighbour.getchildren()
-			for detail in neighbour_details:
-				if detail.tag == 'lldp-remote-system-name':
-					neighbour_info["Remote System Name"] = detail.text
-				elif detail.tag == 'lldp-remote-port-id' or detail.tag == 'lldp-remote-port-description':
-					# Above if statement in a Hack since some of the systems has lldp-remote-port-id and 
-					# some have lldp-remote-port-description as their remote port identification
-					neighbour_info["Remote Port Id"] = detail.text
-				elif detail.tag == 'lldp-local-port-id':
-					neighbour_info["Local Port Id"] = detail.text
-				elif detail.tag == 'lldp-local-parent-interface-name':
-					neighbour_info["Local Parent Interface Name"] = detail.text
-				elif detail.tag == 'lldp-remote-chassis-id':
-					neighbour_info["Remote Chassis Id"] = detail.text
-				elif detail.tag == 'lldp-remote-port-id-subtype' or detail.tag == 'lldp-remote-chassis-id-subtype':
-					neighbour_info["Remote Port Id Subtype"] = detail.text
+		try:
+			lldp_neighbours_information = dev.rpc.get_lldp_neighbors_information()
+			lldp_neighbours = lldp_neighbours_information.getchildren()
+			for neighbour in lldp_neighbours:
+				neighbour_info = {}
+				neighbour_details = neighbour.getchildren()
+				for detail in neighbour_details:
+					if detail.tag == 'lldp-remote-system-name':
+						neighbour_info["Remote System Name"] = detail.text
+					elif detail.tag == 'lldp-remote-port-id' or detail.tag == 'lldp-remote-port-description':
+						# Above if statement in a Hack since some of the systems has lldp-remote-port-id and 
+						# some have lldp-remote-port-description as their remote port identification
+						neighbour_info["Remote Port Id"] = detail.text
+					elif detail.tag == 'lldp-local-port-id':
+						neighbour_info["Local Port Id"] = detail.text
+					elif detail.tag == 'lldp-local-parent-interface-name':
+						neighbour_info["Local Parent Interface Name"] = detail.text
+					elif detail.tag == 'lldp-remote-chassis-id':
+						neighbour_info["Remote Chassis Id"] = detail.text
+					elif detail.tag == 'lldp-remote-port-id-subtype' or detail.tag == 'lldp-remote-chassis-id-subtype':
+						neighbour_info["Remote Port Id Subtype"] = detail.text
 
-			# print the values on the screen
-			print "Destination System Name:", neighbour_info["Remote System Name"]
-			print "Remote Port Id:" , neighbour_info["Remote Port Id"]
-			print "Local Port Id:", neighbour_info["Local Port Id"]
-			print "Local Parent Interface Name:" , neighbour_info["Local Parent Interface Name"]
-			print "Remote Chassis Id:", neighbour_info["Remote Chassis Id"]
-			print "Remote Chassis Id Subtype:" , neighbour_info["Remote Port Id Subtype"]
-			print ''
-
-			#Add this to neighbor dictionary
+				try:
+					# print the values on the screen
+					print "Destination System Name:", neighbour_info["Remote System Name"]
+					print "Remote Port Id:" , neighbour_info["Remote Port Id"]
+					print "Local Port Id:", neighbour_info["Local Port Id"]
+					print "Local Parent Interface Name:" , neighbour_info["Local Parent Interface Name"]
+					print "Remote Chassis Id:", neighbour_info["Remote Chassis Id"]
+					print "Remote Chassis Id Subtype:" , neighbour_info["Remote Port Id Subtype"]
+					print ''
+				except KeyError, e:
+					pass
+					# Do Nothing and just eat the exception
+					# Some keys are not present in all systems
 			neighbour_dict["Destination System: "+neighbour_info["Remote Port Id"]] = neighbour_info
+		except RpcError, e:
+			print "ERROR["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] LLDP is not supported on this device."
+			#Add this to neighbor dictionary
 
 		return neighbour_dict
 
 	def generate_graph(self, dictionary, live_nodes):
-		lldp_neighbours_graph = AGraph(strict = False, directed = True)
+		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = False, splines= True, nodesep="1")
 		# Set the style attributes of the graph
 		lldp_neighbours_graph.node_attr['style']='rounded'
 		lldp_neighbours_graph.node_attr['shape']='box'
@@ -149,7 +157,7 @@ class L1NetworkFlow():
 				local_port = remote["Local Port Id"]
 				remote_port = remote["Remote Port Id"] 
 				key_str = local_port+"_"+remote_port
-				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both',taillabel=remote_port,headlabel=local_port,style='bold',color='blue')
+				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both',tailport = remote_port, taillabel=remote_port,headlabel=local_port,headport= local_port, style='bold',color='blue')
 				# Check if the node is live or dead and update the attribute if needed
 				if destination not in live_nodes:
 					node = lldp_neighbours_graph.get_node(destination)
