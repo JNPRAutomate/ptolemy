@@ -138,7 +138,7 @@ class L1NetworkFlow():
 		return neighbour_dict
 
 	def generate_graph(self, dictionary, live_nodes):
-		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="curved", nodesep="1", ratio = "auto", rankdir = "LR")
+		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="1", ratio = "auto", rankdir = "LR")
 		added = set()
 		# Set the style attributes of the graph
 		lldp_neighbours_graph.node_attr['style']='rounded'
