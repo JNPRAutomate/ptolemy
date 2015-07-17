@@ -138,7 +138,8 @@ class L1NetworkFlow():
 		return neighbour_dict
 
 	def generate_graph(self, dictionary, live_nodes):
-		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = False, splines= True, nodesep="1")
+		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="curved", nodesep="1", ratio = "auto", rankdir = "LR")
+		added = set()
 		# Set the style attributes of the graph
 		lldp_neighbours_graph.node_attr['style']='rounded'
 		lldp_neighbours_graph.node_attr['shape']='box'
@@ -146,6 +147,7 @@ class L1NetworkFlow():
 		lldp_neighbours_graph.node_attr['labelloc']='c'
 		lldp_neighbours_graph.node_attr['fontname']='times'
 		lldp_neighbours_graph.node_attr['fontcolor']='purple'
+		lldp_neighbours_graph.node_attr['sep']='5'
 
 		# Get the data from the dictionary and work on in
 		for source in dictionary.keys():
@@ -157,7 +159,12 @@ class L1NetworkFlow():
 				local_port = remote["Local Port Id"]
 				remote_port = remote["Remote Port Id"] 
 				key_str = local_port+"_"+remote_port
-				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both',tailport = remote_port, taillabel=remote_port,headlabel=local_port,headport= local_port, style='bold',color='blue')
+				# Hack to prevent edge labels overlapping edges
+				lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi",dir='both', style='invis', taillabel=remote_port+"invi", headlabel=local_port+"invi", tailport = remote_port+"invi", headport= local_port+"invi")
+				# Draw the actual edge
+				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', taillabel=remote_port, headlabel=local_port, style='bold',color='blue')
+
+				#lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both',labelfloat = False, labeljust='c', taillabel=remote_port, headlabel=local_port, style='bold',color='blue')
 				# Check if the node is live or dead and update the attribute if needed
 				if destination not in live_nodes:
 					node = lldp_neighbours_graph.get_node(destination)
