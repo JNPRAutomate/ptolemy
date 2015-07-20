@@ -140,6 +140,7 @@ class L1NetworkFlow():
 	def generate_graph(self, dictionary, live_nodes):
 		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="1", ratio = "auto", rankdir = "LR")
 		added = set()
+		edge_count ={}
 		# Set the style attributes of the graph
 		lldp_neighbours_graph.node_attr['style']='rounded'
 		lldp_neighbours_graph.node_attr['shape']='box'
@@ -151,6 +152,7 @@ class L1NetworkFlow():
 
 		# Get the data from the dictionary and work on in
 		for source in dictionary.keys():
+			edge_count[source] = 0
 			# Create an edge between host and neighbour
 			destination_systems = dictionary[source]
 			for remote_sysname in destination_systems.keys():
@@ -160,15 +162,28 @@ class L1NetworkFlow():
 				remote_port = remote["Remote Port Id"] 
 				key_str = local_port+"_"+remote_port
 				# Hack to prevent edge labels overlapping edges
-				lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi",dir='both', style='invis', taillabel=remote_port+"invi", headlabel=local_port+"invi", tailport = remote_port+"invi", headport= local_port+"invi")
+				lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi",dir='both', style='invis', taillabel=remote_port+"invi", headlabel=local_port+"invi", tailport = remote_port+"invi", headport= local_port+"invi", minlen = 5)
 				# Draw the actual edge
-				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', taillabel=remote_port, headlabel=local_port, style='bold',color='blue')
+				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', taillabel="  "+remote_port+"  ", headlabel="  "+local_port+"  ", style='bold',color='blue', minlen=3)
 
+				#maintain a count of number of edges per node
+				if destination in edge_count:
+					# using destination so that dead nodes or nodes not listed in CSV also get covered
+					edge_count[destination] = edge_count[destination] + 1
+				else:
+					edge_count[destination] = 1
+				# increase the number of outgoing edges too
+				edge_count[source] = edge_count[source] + 1
 				#lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both',labelfloat = False, labeljust='c', taillabel=remote_port, headlabel=local_port, style='bold',color='blue')
 				# Check if the node is live or dead and update the attribute if needed
 				if destination not in live_nodes:
 					node = lldp_neighbours_graph.get_node(destination)
 					node.attr['fontcolor'] = 'red'
+
+		# Resize all the nodes based on the number of incoming and outgoing nodes edges
+		for node in lldp_neighbours_graph.nodes():
+			node.attr['height'] = edge_count[node]
+
 		# Generate the graph once the whole topology is parsed
 		self.write_graph(lldp_neighbours_graph)
 
@@ -192,6 +207,12 @@ class L1NetworkFlow():
 		graph.write(graph_file_name) # write to simple.dot
 		print ''
 		print "Wrote graph to "+graph_file_name 
+
+		# Write the graph to a dot file
+		# graph_file_name = self.get_generated_filename("lldp_neighbours_graph_","png")
+		# graph.draw(graph_file_name, prog="neato") # draw to png using circo
+		# print ''
+		# print "Wrote graph to image file "+graph_file_name 
 
 
 	def write_json(self, dictionary):
