@@ -138,9 +138,10 @@ class L1NetworkFlow():
 		return neighbour_dict
 
 	def generate_graph(self, dictionary, live_nodes):
-		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="0.6", ratio = "auto", rankdir = "LR")
+		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="1", ratio = "auto", rankdir = "LR")
 		added = set()
 		edge_count ={}
+		added_edges = {}
 		# Set the style attributes of the graph
 		lldp_neighbours_graph.node_attr['style']='rounded'
 		lldp_neighbours_graph.node_attr['shape']='box'
@@ -155,34 +156,50 @@ class L1NetworkFlow():
 			edge_count[source] = 0
 			# Create an edge between host and neighbour
 			destination_systems = dictionary[source]
-			for remote_sysname in destination_systems.keys():
-				remote = destination_systems[remote_sysname]
-				destination = remote["Remote System Name"] 
-				local_port = remote["Local Port Id"]
-				remote_port = remote["Remote Port Id"] 
-				key_str = local_port+"_"+remote_port
-				# Hack to prevent edge labels overlapping edges
-				lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi",dir='both', style='invis', taillabel=remote_port+"invi", headlabel=local_port+"invi", tailport = remote_port+"invi", headport= local_port+"invi", minlen = 5)
-				# Draw the actual edge
-				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', taillabel="    "+remote_port+"    ", headlabel="    "+local_port+"    ", style='bold',color='blue', minlen=3)
+			if not destination_systems:
+				lldp_neighbours_graph.add_node(source)
+			else:
+				# If there are remote connections
+				for remote_sysname in destination_systems.keys():
+					remote = destination_systems[remote_sysname]
+					destination = remote["Remote System Name"] 
+					local_port = remote["Local Port Id"]
+					remote_port = remote["Remote Port Id"]
+					# Check if same connection is already mapped between the nodes
+					if source+"_to_"+destination in added_edges.keys() and local_port+"_to_"+remote_port == added_edges[source+'_to_'+destination]:
+						continue
+					elif destination+"_to_"+source in added_edges.keys() and remote_port+"_to_"+local_port == added_edges[destination+"_to_"+source]:
+						continue
+					# proceed if the connection doesn't exist
+					key_str = local_port+"_"+remote_port
+					# Hack to prevent edge labels overlapping edges
+					lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi",dir='both', style='invis', taillabel=remote_port+"invi", headlabel=local_port+"invi", tailport = remote_port+"invi", headport= local_port+"invi", minlen = 5)
+					# Draw the actual edge
+					lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', taillabel="    "+remote_port+"    ", headlabel="    "+local_port+"    ", tailport = remote_port, headport= local_port, style='bold',color='blue', minlen=5)
+					# Add the edge to a dictionary so that bi directional edges don't get repeated
+					added_edges[source+'_to_'+destination] = local_port+"_to_"+remote_port
 
-				#maintain a count of number of edges per node
-				if destination in edge_count:
-					# using destination so that dead nodes or nodes not listed in CSV also get covered
-					edge_count[destination] = edge_count[destination] + 1
-				else:
-					edge_count[destination] = 1
-				# increase the number of outgoing edges too
-				edge_count[source] = edge_count[source] + 1
-				#lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both',labelfloat = False, labeljust='c', taillabel=remote_port, headlabel=local_port, style='bold',color='blue')
-				# Check if the node is live or dead and update the attribute if needed
-				if destination not in live_nodes:
-					node = lldp_neighbours_graph.get_node(destination)
-					node.attr['fontcolor'] = 'red'
+					#maintain a count of number of edges per node
+					if destination in edge_count:
+						# using destination so that dead nodes or nodes not listed in CSV also get covered
+						edge_count[destination] = edge_count[destination] + 1
+					else:
+						edge_count[destination] = 1
+					# increase the number of outgoing edges too
+					edge_count[source] = edge_count[source] + 1
+					#lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both',labelfloat = False, labeljust='c', taillabel=remote_port, headlabel=local_port, style='bold',color='blue')
+					# Check if the node is live or dead and update the attribute if needed
+					if destination not in live_nodes:
+						node = lldp_neighbours_graph.get_node(destination)
+						node.attr['fontcolor'] = 'red'
 
 		# Resize all the nodes based on the number of incoming and outgoing nodes edges
 		for node in lldp_neighbours_graph.nodes():
-			node.attr['height'] = edge_count[node]
+			if edge_count[node] > 0:
+				node.attr['height'] = edge_count[node]
+			else:
+				node.attr['height'] = 2
+				node.attr['fontcolor'] = 'orange'
 
 		# Generate the graph once the whole topology is parsed
 		self.write_graph(lldp_neighbours_graph)
