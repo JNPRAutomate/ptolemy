@@ -130,7 +130,7 @@ class L1NetworkFlow():
 					pass
 					# Do Nothing and just eat the exception
 					# Some keys are not present in all systems
-			neighbour_dict["Destination System: "+neighbour_info["Remote Port Id"]] = neighbour_info
+				neighbour_dict["Destination System: "+neighbour_info["Remote Port Id"]] = neighbour_info
 		except RpcError, e:
 			print "ERROR["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] LLDP is not supported on this device."
 			#Add this to neighbor dictionary
@@ -138,7 +138,7 @@ class L1NetworkFlow():
 		return neighbour_dict
 
 	def generate_graph(self, dictionary, live_nodes):
-		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="1", ratio = "auto", rankdir = "LR")
+		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="0.6", ratio = "auto", rankdir = "LR")
 		added = set()
 		edge_count ={}
 		# Set the style attributes of the graph
@@ -164,7 +164,7 @@ class L1NetworkFlow():
 				# Hack to prevent edge labels overlapping edges
 				lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi",dir='both', style='invis', taillabel=remote_port+"invi", headlabel=local_port+"invi", tailport = remote_port+"invi", headport= local_port+"invi", minlen = 5)
 				# Draw the actual edge
-				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', taillabel="  "+remote_port+"  ", headlabel="  "+local_port+"  ", style='bold',color='blue', minlen=3)
+				lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', taillabel="    "+remote_port+"    ", headlabel="    "+local_port+"    ", style='bold',color='blue', minlen=3)
 
 				#maintain a count of number of edges per node
 				if destination in edge_count:
