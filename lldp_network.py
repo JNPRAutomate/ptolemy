@@ -6,6 +6,7 @@ import datetime
 import os.path
 import json
 import traceback
+import getpass
 from pprint import pprint
 import xml.etree.cElementTree as ET
 import socket
@@ -20,11 +21,31 @@ class L1NetworkFlow():
 
 	def get_network_flow(self, device_data):
 
+		global_username = None
+		global_password = None
+		global_ssh= None
+
 		for connection in device_data:
 			print "------------------------------------------------------------------------"
 			print ''
 
 			dev = None
+			# # Check if global credentials are to be entered
+			# if connection["Username"] == "!!GLOBAL!!" and connection["Password"] == "!!GLOBAL!!":
+			# 	if not (global_username and global_password):
+			# 		global_username, global_password = self.get_global_password()
+			# 	connection["Username"] = global_username
+			# 	connection["Password"] = global_password
+			# elif connection["Username"] == "!!GLOBAL!!" and connection["SSH Key Path"] == "!!GLOBAL!!":
+			# 	if not (global_username and global_ssh):
+			# 		global_username, global_ssh = self.get_global_ssh()
+			# 	connection["Username"] = global_username
+			# 	connection["SSH Key Path"] = global_ssh
+			#check if password is given or you need to enter it
+			#el
+			if connection["Password"] == "!!PROMPT!!":
+				connection["Password"] = self.get_password(connection["Hostname"],connection["Username"])
+
 			# Connect to the device
 			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Connecting to "+connection["Hostname"]
 			if connection["SSH Key Path"]:
@@ -70,6 +91,33 @@ class L1NetworkFlow():
 		#Generate the graph from the datastructures generated
 		self.generate_graph(self.lldp_neighbours_dict,self.live_nodes)
 
+	def get_password(self,hostname,username):
+		print 'Enter password associated with Hostname: '+hostname+' and Username: '+username 
+		password = getpass.getpass()
+		if not password:
+			print "Password can't be empty. Please re-enter you password."
+			return self.get_password(self,hostname,username)
+
+		return password
+
+	def get_global_password(self):
+		username =  raw_input('Enter global username to be used:  ')
+		print 'Enter global password for Username: '+ username 
+		password = getpass.getpass()
+		while not password:
+			print "Password can't be empty. Please re-enter your password."
+			password = getpass.getpass()
+
+		return username, password
+
+	def get_global_ssh(self):
+		username = raw_input('Enter global username to be used:  ')
+		ssh_path = raw_input('Enter global SSH File Path for Username: '+ username )
+		while not ssh_path:
+			print "SSH File path can't be empty. Please re-enter the path."
+			ssh_path = raw_input('Enter global SSH File Path for Username: '+ username )
+
+		return username, ssh_path
 
 	def get_device_nossh(self,username,hostname,portNumber,password):
 		# trim the whitespaces
@@ -110,27 +158,30 @@ class L1NetworkFlow():
 						neighbour_info["Remote Port Id"] = detail.text
 					elif detail.tag == 'lldp-local-port-id':
 						neighbour_info["Local Port Id"] = detail.text
-					elif detail.tag == 'lldp-local-parent-interface-name':
-						neighbour_info["Local Parent Interface Name"] = detail.text
-					elif detail.tag == 'lldp-remote-chassis-id':
-						neighbour_info["Remote Chassis Id"] = detail.text
-					elif detail.tag == 'lldp-remote-port-id-subtype' or detail.tag == 'lldp-remote-chassis-id-subtype':
-						neighbour_info["Remote Port Id Subtype"] = detail.text
+					# elif detail.tag == 'lldp-local-parent-interface-name':
+					# 	neighbour_info["Local Parent Interface Name"] = detail.text
+					# elif detail.tag == 'lldp-remote-chassis-id':
+					# 	neighbour_info["Remote Chassis Id"] = detail.text
+					# elif detail.tag == 'lldp-remote-port-id-subtype' or detail.tag == 'lldp-remote-chassis-id-subtype':
+					# 	neighbour_info["Remote Port Id Subtype"] = detail.text
 
 				try:
 					# print the values on the screen
-					print "Destination System Name:", neighbour_info["Remote System Name"]
+					#print "Destination System Name:", neighbour_info["Remote System Name"]
 					print "Remote Port Id:" , neighbour_info["Remote Port Id"]
 					print "Local Port Id:", neighbour_info["Local Port Id"]
-					print "Local Parent Interface Name:" , neighbour_info["Local Parent Interface Name"]
-					print "Remote Chassis Id:", neighbour_info["Remote Chassis Id"]
-					print "Remote Chassis Id Subtype:" , neighbour_info["Remote Port Id Subtype"]
+					#print "Local Parent Interface Name:" , neighbour_info["Local Parent Interface Name"]
+					#print "Remote Chassis Id:", neighbour_info["Remote Chassis Id"]
+					#print "Remote Chassis Id Subtype:" , neighbour_info["Remote Port Id Subtype"]
 					print ''
 				except KeyError, e:
 					pass
 					# Do Nothing and just eat the exception
 					# Some keys are not present in all systems
-				neighbour_dict["Destination System: "+neighbour_info["Remote Port Id"]] = neighbour_info
+				if "Destination System: "+neighbour_info["Remote System Name"] in neighbour_dict:
+					neighbour_dict["Destination System: "+neighbour_info["Remote System Name"]].update(neighbour_info)
+				else:
+					neighbour_dict["Destination System: "+neighbour_info["Remote System Name"]] = neighbour_info
 		except RpcError, e:
 			print "ERROR["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] LLDP is not supported on this device."
 			#Add this to neighbor dictionary
@@ -138,7 +189,7 @@ class L1NetworkFlow():
 		return neighbour_dict
 
 	def generate_graph(self, dictionary, live_nodes):
-		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="1", ratio = "auto", rankdir = "LR")
+		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="1", rankdir = "LR")
 		added = set()
 		edge_count ={}
 		added_edges = {}
@@ -153,7 +204,8 @@ class L1NetworkFlow():
 
 		# Get the data from the dictionary and work on in
 		for source in dictionary.keys():
-			edge_count[source] = 0
+			if source not in edge_count:
+				edge_count[source] = 0
 			# Create an edge between host and neighbour
 			destination_systems = dictionary[source]
 			if not destination_systems:
@@ -173,9 +225,11 @@ class L1NetworkFlow():
 					# proceed if the connection doesn't exist
 					key_str = local_port+"_"+remote_port
 					# Hack to prevent edge labels overlapping edges
-					lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi",dir='both', style='invis', taillabel=remote_port+"invi", headlabel=local_port+"invi", tailport = remote_port+"invi", headport= local_port+"invi", minlen = 5)
+					#lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi",dir='both', style='invis', headlabel=remote_port+"invi", taillabel=local_port+"invi", minlen = 5)
 					# Draw the actual edge
-					lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', taillabel="    "+remote_port+"    ", headlabel="    "+local_port+"    ", tailport = remote_port, headport= local_port, style='bold',color='blue', minlen=5)
+					lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', headlabel="    "+remote_port+"    ", taillabel="    "+local_port+"    ", style='bold',color='blue', minlen=5)
+					# Hack to prevent edge labels overlapping edges
+					#lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi1",dir='both', style='invis', headlabel=remote_port+"invi1", taillabel=local_port+"invi1", minlen = 5)
 					# Add the edge to a dictionary so that bi directional edges don't get repeated
 					added_edges[source+'_to_'+destination] = local_port+"_to_"+remote_port
 
@@ -197,6 +251,7 @@ class L1NetworkFlow():
 		for node in lldp_neighbours_graph.nodes():
 			if edge_count[node] > 0:
 				node.attr['height'] = edge_count[node]
+				node.attr['width'] = edge_count[node]
 			else:
 				node.attr['height'] = 2
 				node.attr['fontcolor'] = 'orange'
