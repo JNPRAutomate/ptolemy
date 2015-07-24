@@ -30,19 +30,6 @@ class L1NetworkFlow():
 			print ''
 
 			dev = None
-			# # Check if global credentials are to be entered
-			# if connection["Username"] == "!!GLOBAL!!" and connection["Password"] == "!!GLOBAL!!":
-			# 	if not (global_username and global_password):
-			# 		global_username, global_password = self.get_global_password()
-			# 	connection["Username"] = global_username
-			# 	connection["Password"] = global_password
-			# elif connection["Username"] == "!!GLOBAL!!" and connection["SSH Key Path"] == "!!GLOBAL!!":
-			# 	if not (global_username and global_ssh):
-			# 		global_username, global_ssh = self.get_global_ssh()
-			# 	connection["Username"] = global_username
-			# 	connection["SSH Key Path"] = global_ssh
-			#check if password is given or you need to enter it
-			#el
 			if connection["Password"] == "!!PROMPT!!":
 				connection["Password"] = self.get_password(connection["Hostname"],connection["Username"])
 
@@ -56,11 +43,6 @@ class L1NetworkFlow():
 			
 			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Waiting for connections to establish..."
 
-			# !!!!!NOT ALL Systems have Reverse DNS Lookup- Won't work.
-			# Reverse DNS look up each node and get it's hostname
-			#host_add = connection["Hostname"]
-			#host = socket.gethostbyaddr(host_add)
-			#self.nodes.add(host)
 			host = connection["Hostname"]
 			try:
 				dev.open()

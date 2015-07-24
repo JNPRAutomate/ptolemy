@@ -9,7 +9,7 @@ from pprint import pprint
 def main(argv):
 	user_arguments = {}
 	try:
-		opts, args = getopt.getopt(argv, "i:u:p:o:f:", ["in=", "user=","password=","log-path=","log-all","log-device","out=","out-all","out-device","out-format="])
+		opts, args = getopt.getopt(argv, "i:u:p:o:f:", ["in=", "user=","password=","log-path=","log","log-all","log-device","out=","out-all","out-device","out-format="])
 	except getopt.GetoptError:
 		#usage()
 		sys.exit(2)
@@ -27,14 +27,16 @@ def main(argv):
 			user_arguments["Output Path"] = args
 		elif opt == "--log-path":
 			user_arguments["Log Path"] = args
+		elif opt == "--log":
+			user_arguments["Log"] = "Log"
 		elif opt == "--log-device":
-			user_arguments["Log Device"] = True
+			user_arguments["Log"] = "Log Device"
 		elif opt == "--log-all":
-			user_arguments["Log All"] = True
+			user_arguments["Log"] = "Log All"
 		elif opt == "--out-all":
-			user_arguments["Output All"] = True
+			user_arguments["Output"] = "Output All"
 		elif opt == "--out-device":
-			user_arguments["Output Device"] = True
+			user_arguments["Output"] = "Output Device"
 		elif opt == "--out-format":
 			user_arguments["Format"] = args
 		else:

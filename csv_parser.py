@@ -4,6 +4,7 @@ import csv
 from pprint import pprint
 
 device_data = {"data":[]}
+argument_keys = ("Hostname","Username","Password","SSH Key Path","Output Path","Log Path","Log Type","Output Type", "Format","Port")
 
 class CSVParser:
 
@@ -14,25 +15,23 @@ class CSVParser:
 			reader = csv.DictReader(f, delimiter=',')
 			for line in reader:
 				device = {}
-				device["Hostname"] = line["Hostname"]
-				self.set_value(device,user_arguments,"Username",line["Username"])
-				self.set_value(device,user_arguments,"Password",line["Password"])
-				self.set_value(device,user_arguments,"SSH Key Path",line["SSH Key Path"])
-				#self.set_value(device,user_arguments, "Username",line["Username"])
-				#self.set_value(device,user_arguments, "Username",line["Username"])
-				#self.set_value(device,user_arguments, "Username",line["Username"])
-				device["Port"] = line["Port"]
+				for key in argument_keys:
+					print key 
+					print line.get(key)
+					device[key] = self.set_value(device,user_arguments,key,line.get(key))
 				device_data["data"].append(device)
 			f.close()
-			#pprint(device_data)
+			pprint(device_data)
 			return device_data["data"]
 
 
 	def set_value(self, device, dictionary, key, parsed_value):
 		if dictionary.get(key) and dictionary[key]:
 			device[key] = dictionary[key]
+			print key + " value set to "+ device[key]
 		else:
 			device[key] = parsed_value
+		return device[key]
 
 
 
