@@ -171,7 +171,7 @@ class L1NetworkFlow():
 		return neighbour_dict
 
 	def generate_graph(self, dictionary, live_nodes):
-		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="1", rankdir = "LR")
+		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="0.7", rankdir = "LR")
 		added = set()
 		edge_count ={}
 		added_edges = {}
@@ -233,7 +233,7 @@ class L1NetworkFlow():
 		for node in lldp_neighbours_graph.nodes():
 			if edge_count[node] > 0:
 				node.attr['height'] = edge_count[node]
-				node.attr['width'] = edge_count[node]
+				node.attr['width'] = 0.6 * edge_count[node]
 			else:
 				node.attr['height'] = 2
 				node.attr['fontcolor'] = 'orange'
