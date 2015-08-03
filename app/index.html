@@ -141,14 +141,14 @@
 
         			    <!-- buttons -->
         			    <div class="btn-edit">
-        			      <md-button  type="button" class="btn btn-default" ng-show="!tableform.$visible" ng-click="tableform.$show()">
+        			      <md-button  type="button" class="md-raised md-primary" ng-show="!tableform.$visible" ng-click="tableform.$show()">
         			        edit
         			      </md-button >
         			    </div>
         			    <div class="btn-form" ng-show="tableform.$visible">
-        			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="addUser()" class="btn btn-default pull-right">add row</md-button >
-        			      <md-button  type="submit" ng-disabled="tableform.$waiting" class="btn btn-primary">save</md-button >
-        			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="btn btn-default">cancel</md-button >
+        			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="addUser()" class="md-raised md-primary">add row</md-button >
+        			      <md-button  type="submit" ng-disabled="tableform.$waiting" class="md-raised md-primary">save</md-button >
+        			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="md-raised md-primary">cancel</md-button >
         			    </div> 
         			    
         			  </form>
