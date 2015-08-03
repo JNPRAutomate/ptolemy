@@ -104,36 +104,36 @@
                       <td style="width:3%">Port</td>
         			        <td style="width:12%"><span ng-show="tableform.$visible">Action</span></td>
         			      </tr>
-        			      <tr ng-repeat="user in users | filter:filterUser">
+        			      <tr ng-repeat="device in connectionDetails">
         			        <td>
         			          <!-- editable username (text with validation) -->
-        			          <span editable-text="user.name" e-form="tableform" onbeforesave="checkName($data, user.id)">
-        			            {{ user.name || 'empty' }}
+        			          <span editable-text="device.hostname" e-form="tableform">
+        			            {{ device.hostname }}
         			          </span>
         			        </td>
         			        <td>
         			          <!-- editable status (select-local) -->
-        			          <span editable-select="user.status" e-form="tableform" e-ng-options="s.value as s.text for s in statuses">
-        			            {{ showStatus(user) }}
+        			          <span editable-text="device.username" e-form="tableform">
+        			            {{ device.username }}
         			          </span>
         			        </td>
         			        <td>
         			          <!-- editable group (select-remote) -->
-        			          <span editable-select="user.group" e-form="tableform" onshow="loadGroups()" e-ng-options="g.id as g.text for g in groups">
-        			            {{ showGroup(user) }}
+        			          <span editable-text="device.password" e-form="tableform">
+        			            {{ device.password }}
         			          </span>
         			        </td>
                       <td>
                         <!-- editable group (select-remote) -->
-                        <!-- <span editable-select="user.group" e-form="tableform" onshow="loadGroups()" e-ng-options="g.id as g.text for g in groups">
-                          {{ showGroup(user) }}
-                        </span> -->
+                        <span editable-text="device.path" e-form="tableform">
+                          {{ device.path }}
+                        </span>
                       </td>
                       <td>
                         <!-- editable group (select-remote) -->
-                        <!-- <span editable-select="user.group" e-form="tableform" onshow="loadGroups()" e-ng-options="g.id as g.text for g in groups">
-                          {{ showGroup(user) }}
-                        </span> -->
+                        <span editable-text="device.port" e-form="tableform">
+                          {{ device.port }}
+                        </span>
                       </td>
         			        <td><md-button class="md-raised md-warn" ng-show="tableform.$visible" ng-click="deleteUser(user.id)">Delete</md-button></td>
         			      </tr>
@@ -157,6 +157,7 @@
           </md-card>
 
           <section layout="row" layout-sm="column" layout-align="center center">
+              <md-button class="md-raised md-primary" ng-click="PageOne()" > Back </md-button>
               <md-button class="md-raised md-primary" ng-click="PageTwo()" > Next </md-button>
              <div class="label" style="visibility: hidden">Raised</div>
           </section> 
@@ -222,7 +223,21 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
 		$scope.pageThreeVisible = true;
     }
 
-     $scope.users = [
+
+  $scope.connectionDetails = [
+  {hostname: 'cdbu-sol-vcf-5100-24q-01.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  {hostname: 'cdbu-sol-vcf-5100-24q-02.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  {hostname: 'cdbu-sol-vcf-5100-24q-03.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
+  {hostname: 'cdbu-sol-vcf-5100-24q-04.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  {hostname: 'cdbu-sol-vcf-5100-48s-01.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  {hostname: 'cdbu-sol-vcf-5100-48s-02.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},    
+  {hostname: 'cdbu-sol-vcf-5100-48s-03.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  {hostname: 'cdbu-sol-vcf-5100-48s-04.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
+  {hostname: 'cdbu-sol-vcf-5100-48s-05.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
+  {hostname: 'cdbu-sol-vcf-5100-48s-06.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''}
+  ];
+
+  $scope.users = [
     {id: 1, name: 'awesome user1', status: 2, group: 4, groupName: 'admin'},
     {id: 2, name: 'awesome user2', status: undefined, group: 3, groupName: 'vip'},
     {id: 3, name: 'awesome user3', status: 2, group: null}
