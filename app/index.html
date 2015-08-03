@@ -1,0 +1,264 @@
+<html   ng-app="myApp" ng-controller="AppCtrl">
+<head>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
+  <script src="js/xeditable.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+
+</head>
+<body>
+<div ng-controller="AppCtrl" layout="column">
+  <section layout="row" flex>
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="true">
+      <md-content layout-padding>
+        <!-- <p hide-md show-gt-md>
+          This sidenav is locked open on your device. To go back to the default behavior,
+          narrow your display.
+        </p> -->
+        <img ng-src="img/icons/logo.png" alt="Ptolemy - The Network Cartographer" style="padding-left:40px" layout-align="center center">
+      </md-content>
+    </md-sidenav>
+    <md-content flex layout-padding>
+
+    	<md-toolbar class="md-theme-indigo">
+        	<h1 class="md-toolbar-tools">Sidenav Left</h1>
+      	</md-toolbar>
+
+      <div>
+      	<input type="button" value="Page1" ng-click="PageOne()" />
+      	<input type="button" value="Page2" ng-click="PageTwo()" />
+      	<input type="button" value="Page3" ng-click="PageThree()" />
+      </div>
+
+      <div layout="column" layout-fill layout-align="top center" ng-show="pageOneVisible">
+        FIRST
+      </div>
+
+
+      <div layout="column" layout-fill layout-align="top center"  ng-show="pageTwoVisible">
+        SECOND
+        <div id="svgg">
+
+        </div>
+      </div>
+
+
+      <div layout="column" layout-fill layout-align="top center" ng-show="pageThreeVisible">
+      		  <form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()">
+
+			    <!-- table -->
+			    <table class="table table-bordered table-hover table-condensed" border=1>
+			      <tr style="font-weight: bold">
+			        <td style="width:40%">Name</td>
+			        <td style="width:30%">Status</td>
+			        <td style="width:30%">Group</td>
+			        <td style="width:30%"><span ng-show="tableform.$visible">Action</span></td>
+			      </tr>
+			      <tr ng-repeat="user in users | filter:filterUser">
+			        <td>
+			          <!-- editable username (text with validation) -->
+			          <span editable-text="user.name" e-form="tableform" onbeforesave="checkName($data, user.id)">
+			            {{ user.name || 'empty' }}
+			          </span>
+			        </td>
+			        <td>
+			          <!-- editable status (select-local) -->
+			          <span editable-select="user.status" e-form="tableform" e-ng-options="s.value as s.text for s in statuses">
+			            {{ showStatus(user) }}
+			          </span>
+			        </td>
+			        <td>
+			          <!-- editable group (select-remote) -->
+			          <span editable-select="user.group" e-form="tableform" onshow="loadGroups()" e-ng-options="g.id as g.text for g in groups">
+			            {{ showGroup(user) }}
+			          </span>
+			        </td>
+			        <td><button type="button" ng-show="tableform.$visible" ng-click="deleteUser(user.id)" class="btn btn-danger pull-right">Del</button></td>
+			      </tr>
+			    </table>
+
+			    <!-- buttons -->
+			    <div class="btn-edit">
+			      <md-button  type="button" class="btn btn-default" ng-show="!tableform.$visible" ng-click="tableform.$show()">
+			        edit
+			      </md-button >
+			    </div>
+			    <div class="btn-form" ng-show="tableform.$visible">
+			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="addUser()" class="btn btn-default pull-right">add row</md-button >
+			      <md-button  type="submit" ng-disabled="tableform.$waiting" class="btn btn-primary">save</md-button >
+			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="btn btn-default">cancel</md-button >
+			    </div> 
+			    
+			  </form>
+      </div>
+
+     <div flex></div>
+
+    </md-content>
+
+
+    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+      <md-toolbar class="md-theme-light">
+        <h1 class="md-toolbar-tools">Sidenav Right</h1>
+      </md-toolbar>
+      <md-content layout-padding>
+        <form>
+          <md-input-container>
+            <label for="testInput">Test input</label>
+            <input type="text" id="testInput"
+                   ng-model="data" md-sidenav-focus>
+          </md-input-container>
+        </form>
+        <md-button ng-click="close()" class="md-primary">
+          Close Sidenav Right
+        </md-button>
+      </md-content>
+    </md-sidenav>
+  </section>
+</div>
+
+<script>
+var app = angular.module('myApp', ['ngMaterial','xeditable']);
+app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log, $filter, $http, $q) {
+
+	$scope.pageOneVisible = true;
+	$scope.pageTwoVisible = false;
+	$scope.pageThreeVisible = false;
+
+	$scope.PageOne = function () {
+		$scope.pageOneVisible = true;
+		$scope.pageTwoVisible = false;
+		$scope.pageThreeVisible = false;
+    }
+
+	$scope.PageTwo = function () {
+		$scope.pageOneVisible = false;
+		$scope.pageTwoVisible = true;
+		$scope.pageThreeVisible = false;
+
+		$http.post("/asd.svg", {file1:$scope.tracediffFile1, file2:$scope.tracediffFile2})
+      .success(function (response) {
+        $scope.svgFile = response;
+
+        angular.element( document.querySelector( '#svgg' ) ).append($scope.svgFile);
+		$scope.$apply ();
+      });
+    }
+
+	$scope.PageThree = function () {
+		$scope.pageOneVisible = false;
+		$scope.pageTwoVisible = false;
+		$scope.pageThreeVisible = true;
+    }
+
+     $scope.users = [
+    {id: 1, name: 'awesome user1', status: 2, group: 4, groupName: 'admin'},
+    {id: 2, name: 'awesome user2', status: undefined, group: 3, groupName: 'vip'},
+    {id: 3, name: 'awesome user3', status: 2, group: null}
+  ]; 
+
+  $scope.statuses = [
+    {value: 1, text: 'status1'},
+    {value: 2, text: 'status2'},
+    {value: 3, text: 'status3'},
+    {value: 4, text: 'status4'}
+  ]; 
+
+  $scope.groups = [];
+  $scope.loadGroups = function() {
+    return $scope.groups.length ? null : $http.get('/groups').success(function(data) {
+      $scope.groups = data;
+    });
+  };
+
+  $scope.showGroup = function(user) {
+    if(user.group && $scope.groups.length) {
+      var selected = $filter('filter')($scope.groups, {id: user.group});
+      return selected.length ? selected[0].text : 'Not set';
+    } else {
+      return user.groupName || 'Not set';
+    }
+  };
+
+  $scope.showStatus = function(user) {
+    var selected = [];
+    if(user.status) {
+      selected = $filter('filter')($scope.statuses, {value: user.status});
+    }
+    return selected.length ? selected[0].text : 'Not set';
+  };
+
+  $scope.checkName = function(data, id) {
+    if (id === 2 && data !== 'awesome') {
+      return "Username 2 should be `awesome`";
+    }
+  };
+
+  // filter users to show
+  $scope.filterUser = function(user) {
+    return user.isDeleted !== true;
+  };
+
+  // mark user as deleted
+  $scope.deleteUser = function(id) {
+    var filtered = $filter('filter')($scope.users, {id: id});
+    if (filtered.length) {
+      filtered[0].isDeleted = true;
+    }
+  };
+
+  // add user
+  $scope.addUser = function() {
+    $scope.users.push({
+      id: $scope.users.length+1,
+      name: '',
+      status: null,
+      group: null,
+      isNew: true
+    });
+  };
+
+  // cancel all changes
+  $scope.cancel = function() {
+    for (var i = $scope.users.length; i--;) {
+      var user = $scope.users[i];    
+      // undelete
+      if (user.isDeleted) {
+        delete user.isDeleted;
+      }
+      // remove new 
+      if (user.isNew) {
+        $scope.users.splice(i, 1);
+      }      
+    };
+  };
+
+  // save edits
+  $scope.saveTable = function() {
+    var results = [];
+    for (var i = $scope.users.length; i--;) {
+      var user = $scope.users[i];
+      // actually delete user
+      if (user.isDeleted) {
+        $scope.users.splice(i, 1);
+      }
+      // mark as not new 
+      if (user.isNew) {
+        user.isNew = false;
+      }
+
+      // send on server
+      results.push($http.post('/saveUser', user));      
+    }
+
+    return $q.all(results);
+  };
+});
+
+</script>
+</body>
+</html>
