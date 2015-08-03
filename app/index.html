@@ -49,11 +49,11 @@
         	<h1 class="md-toolbar-tools">Home</h1>
       	</md-toolbar>
 
-      <div>
+      <!-- <div>
       	<input type="button" value="Page1" ng-click="PageOne()" />
       	<input type="button" value="Page2" ng-click="PageTwo()" />
       	<input type="button" value="Page3" ng-click="PageThree()" />
-      </div>
+      </div> -->
 
       <div layout="column" layout-fill layout-align="top center" ng-show="pageOneVisible">
          <!-- Page 1 : Choose between Existing Template or download a Sample Template button -->
@@ -97,10 +97,12 @@
         			    <!-- table -->
         			    <table class="table table-bordered table-hover table-condensed" border=1>
         			      <tr style="font-weight: bold">
-        			        <td style="width:40%">Name</td>
-        			        <td style="width:30%">Status</td>
-        			        <td style="width:30%">Group</td>
-        			        <td style="width:30%"><span ng-show="tableform.$visible">Action</span></td>
+        			        <td style="width:19%">Hostname</td>
+        			        <td style="width:18%">Username</td>
+        			        <td style="width:18%">Password</td>
+                      <td style="width:30%">SSH Private Key Path</td>
+                      <td style="width:3%">Port</td>
+        			        <td style="width:12%"><span ng-show="tableform.$visible">Action</span></td>
         			      </tr>
         			      <tr ng-repeat="user in users | filter:filterUser">
         			        <td>
@@ -121,7 +123,19 @@
         			            {{ showGroup(user) }}
         			          </span>
         			        </td>
-        			        <td><button type="button" ng-show="tableform.$visible" ng-click="deleteUser(user.id)" class="btn btn-danger pull-right">Del</button></td>
+                      <td>
+                        <!-- editable group (select-remote) -->
+                        <!-- <span editable-select="user.group" e-form="tableform" onshow="loadGroups()" e-ng-options="g.id as g.text for g in groups">
+                          {{ showGroup(user) }}
+                        </span> -->
+                      </td>
+                      <td>
+                        <!-- editable group (select-remote) -->
+                        <!-- <span editable-select="user.group" e-form="tableform" onshow="loadGroups()" e-ng-options="g.id as g.text for g in groups">
+                          {{ showGroup(user) }}
+                        </span> -->
+                      </td>
+        			        <td><md-button class="md-raised md-warn" ng-show="tableform.$visible" ng-click="deleteUser(user.id)">Delete</md-button></td>
         			      </tr>
         			    </table>
 
@@ -141,6 +155,12 @@
 
                 </md-card-content>
           </md-card>
+
+          <section layout="row" layout-sm="column" layout-align="center center">
+              <md-button class="md-raised md-primary" ng-click="PageTwo()" > Next </md-button>
+             <div class="label" style="visibility: hidden">Raised</div>
+          </section> 
+
       </div>
 
      <div flex></div>
