@@ -1,6 +1,6 @@
 <html   ng-app="myApp" ng-controller="AppCtrl">
 <head>
-
+    <title>Ptolemy - The Network Cartographer</title>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
@@ -49,14 +49,9 @@
         	<h1 class="md-toolbar-tools">Home</h1>
       	</md-toolbar>
 
-      <!-- <div>
-      	<input type="button" value="Page1" ng-click="PageOne()" />
-      	<input type="button" value="Page2" ng-click="PageTwo()" />
-      	<input type="button" value="Page3" ng-click="PageThree()" />
-      </div> -->
+      <!-- Page 1 : Choose between Existing Template or download a Sample Template button -->
 
       <div layout="column" layout-fill layout-align="top center" ng-show="pageOneVisible">
-         <!-- Page 1 : Choose between Existing Template or download a Sample Template button -->
         <md-card>
               <md-card-content>
                 <h2 class="md-title">Configuration</h2>
@@ -70,24 +65,67 @@
                 </md-card-content>
           </md-card>
           <section layout="row" layout-sm="column" layout-align="center center">
-              <md-button class="md-raised md-primary" ng-click="PageThree()" > Next </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageTwo()" > Next </md-button>
              <div class="label" style="visibility: hidden">Raised</div>
           </section> 
 
       </div>
 
+      <!-- End of Page 1 -->
 
+      <!-- Page 2 - Configuration : Choose Global Credentials -->
       <div layout="column" layout-fill layout-align="top center"  ng-show="pageTwoVisible">
-        SECOND
-        <div id="svgg">
+       <md-card>
+              <md-card-content>
+                <h2 class="md-title">Configuration</h2>
+                <md-checkbox md-no-ink class="md-primary" ng-model="global" aria-label="Use Global User Credentials">
+                  Use Global User Credentials
+                </md-checkbox>
 
-        </div>
+                <md-radio-group ng-model="global.credential_group">
+                  <md-radio-button value="radio_user" class="md-primary" style="display:inline">User Credentials</md-radio-button>
+                  <md-radio-button value="radio_ssh" class="md-primary" style="display:inline"> SSH Private Key Path </md-radio-button>
+                </md-radio-group>
+
+                <!-- Username and Password If User Credentials is chosen -->
+                <md-content layout-padding layout="row" layout-sm="column" >
+                <!-- ng-show="userCredentials" -->
+                    <label style="margin-top:10px">Username</label>
+                    <input id="username" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.username">
+                    <label style="margin-top:10px;margin-left:10px">Password</label>
+                    <input id="password" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.password" type="password">
+                    <md-checkbox md-no-ink class="md-primary" ng-model="show" aria-label="Show Password" id="show_password"> Show Password</md-checkbox>
+                </md-content>
+
+
+                <!-- SSH File Path Key -->
+                <md-content layout-padding layout="row" layout-sm="column" > 
+                <!-- ng-show="sshCredentials" -->
+                    <label style="margin-top:10px">SSH Private Key Path</label>
+                    <input type="file" id="ssh" style="margin-top:10px;margin-left:20px">
+                </md-content>
+
+                 <!-- Settings for Log Generation -->
+                <md-content layout-padding layout="row" layout-sm="column" > 
+                <!-- ng-show="sshCredentials" -->
+                    <label style="margin-top:10px">Log </label>
+                    <input type="file" id="ssh" style="margin-top:10px;margin-left:20px">
+                </md-content>
+
+
+              </md-card-content>
+        </md-card>
+
+        <section layout="row" layout-sm="column" layout-align="center center">
+            <md-button class="md-raised md-primary" ng-click="PageOne()" > Back </md-button>
+            <md-button class="md-raised md-primary" ng-click="PageThree()" > Next </md-button>
+           <div class="label" style="visibility: hidden">Raised</div>
+        </section> 
       </div>
+      <!-- End of Page 2 -->
 
-
+      <!-- Page 3 - Configuration : Upload CSV and Connection Table -->
       <div layout="column" layout-fill layout-align="top center" ng-show="pageThreeVisible">
-
-
        <md-card>
               <md-card-content>
                 <h2 class="md-title">Configuration</h2>
@@ -119,8 +157,8 @@
         			        </td>
         			        <td>
         			          <!-- editable group (select-remote) -->
-        			          <span editable-text="device.password" e-form="tableform">
-        			            {{ device.password }}
+        			          <span editable-password="device.password" e-form="tableform">
+        			            <input type="password" name="lname" disabled value="{{ device.password }}">
         			          </span>
         			        </td>
                       <td>
@@ -157,18 +195,22 @@
           </md-card>
 
           <section layout="row" layout-sm="column" layout-align="center center">
-              <md-button class="md-raised md-primary" ng-click="PageOne()" > Back </md-button>
-              <md-button class="md-raised md-primary" ng-click="PageTwo()" > Next </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageTwo()" > Back </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageOne()" > Next </md-button>
              <div class="label" style="visibility: hidden">Raised</div>
           </section> 
 
       </div>
+      <!-- End of Page 3 -->
+
+
 
      <div flex></div>
 
     </md-content>
 
 
+    <!-- Right Side Navigator -->
     <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
       <md-toolbar class="md-theme-light">
         <h1 class="md-toolbar-tools">Sidenav Right</h1>
@@ -186,8 +228,11 @@
         </md-button>
       </md-content>
     </md-sidenav>
+    <!-- End of Right side navigator -->
+
   </section>
 </div>
+
 
 <script>
 var app = angular.module('myApp', ['ngMaterial','xeditable']);
