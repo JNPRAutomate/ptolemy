@@ -55,11 +55,9 @@
         <md-card>
               <md-card-content>
                 <h2 class="md-title">Configuration</h2>
-                <md-switch class="md-primary" md-no-ink ng-model="usetemplate">Develop using Existing Template</md-switch>
-                <md-button>
-                  <label for="file-input">Browse Template</label>  
-                </md-button>
-                <input id="file-input" type="file">
+                <md-switch class="md-primary" md-no-ink ng-model="templateSwitch" ng-change="onTemplateSwitchChange(templateSwitch)">Develop using Existing Template</md-switch>
+                <label for="file-input" style="margin-left:20px">Browse Template</label>  
+                <input id="file-input" style="margin-left:10px" type="file" ng-disabled="isTemplateDisabled">
 
                 <md-button class="md-raised md-primary">Download Sample Template</md-button>
                 </md-card-content>
@@ -107,11 +105,57 @@
 
                  <!-- Settings for Log Generation -->
                 <md-content layout-padding layout="row" layout-sm="column" > 
-                <!-- ng-show="sshCredentials" -->
-                    <label style="margin-top:10px">Log </label>
-                    <input type="file" id="ssh" style="margin-top:10px;margin-left:20px">
-                </md-content>
 
+                    <div layout="row">
+                      <div flex="50" flex-md="100" layout="column">
+                        <fieldset class="standard" flex>
+                          <legend>Output Formats</legend>
+                          <div layout="row" layout-wrap>
+                           <div class="standard" flex="50">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="DOT" flex="50">
+                            DOT
+                           </md-checkbox>
+                           </div>
+                            <div class="standard" flex="50">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="JSON" flex="50" >
+                              JSON
+                           </md-checkbox>
+                           </div>
+                            <div class="standard" flex="50">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="SVG" flex="50">
+                              SVG
+                           </md-checkbox>
+                           </div>
+                            <div class="standard" flex="50">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="PDF" flex="50">
+                              PDF
+                           </md-checkbox>
+                           </div>
+                            <div class="standard" flex="50">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="PNG" flex="50">
+                              PNG
+                           </md-checkbox>
+                           </div>
+                          </div>
+                        </fieldset>
+                      </div>
+
+                      <div flex="50" flex-md="100" layout="column">
+                        <fieldset class="standard" flex>
+                          <legend>Logs</legend>
+                          <div layout="row" layout-wrap>
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="Generate Logs Per Device">
+                            Generate Logs Per Device
+                           </md-checkbox>
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="Generate Global Logs" >
+                            Generate Global Logs
+                           </md-checkbox>
+                          </div>
+                        </fieldset>
+                      </div>
+                    </div>
+
+                </md-content>
 
               </md-card-content>
         </md-card>
@@ -246,6 +290,8 @@
 var app = angular.module('myApp', ['ngMaterial','xeditable']);
 app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log, $filter, $http, $q) {
 
+  $scope.isTemplateDisabled = true;
+
 	$scope.pageOneVisible = true;
 	$scope.pageTwoVisible = false;
 	$scope.pageThreeVisible = false;
@@ -276,6 +322,10 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
 		$scope.pageThreeVisible = true;
     }
 
+
+  $scope.onTemplateSwitchChange = function(switchValue) {
+    $scope.isTemplateDisabled = !switchValue
+  }
 
   $scope.connectionDetails = [
   {hostname: 'cdbu-sol-vcf-5100-24q-01.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
