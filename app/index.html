@@ -76,17 +76,19 @@
        <md-card>
               <md-card-content>
                 <h2 class="md-title">Configuration</h2>
-                <md-checkbox md-no-ink class="md-primary" ng-model="global" aria-label="Use Global User Credentials">
+                <md-checkbox md-no-ink class="md-primary" ng-model="global_credentials" aria-label="Use Global User Credentials">
                   Use Global User Credentials
                 </md-checkbox>
 
-                <md-radio-group ng-model="global.credential_group">
-                  <md-radio-button value="radio_user" class="md-primary" style="display:inline">User Credentials</md-radio-button>
-                  <md-radio-button value="radio_ssh" class="md-primary" style="display:inline"> SSH Private Key Path </md-radio-button>
+
+                <div ng-show="global_credentials == true">
+                <md-radio-group ng-model="global_credential_group">
+                  <md-radio-button value="User Credentials" class="md-primary" style="display:inline">User Credentials</md-radio-button>
+                  <md-radio-button value="SSH Private Key Path" class="md-primary" style="display:inline"> SSH Private Key Path </md-radio-button>
                 </md-radio-group>
 
                 <!-- Username and Password If User Credentials is chosen -->
-                <md-content layout-padding layout="row" layout-sm="column" >
+                <md-content layout-padding layout="row" layout-sm="column" ng-show="global_credential_group == 'User Credentials'">
                 <!-- ng-show="userCredentials" -->
                     <label style="margin-top:10px">Username</label>
                     <input id="username" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.username">
@@ -97,11 +99,14 @@
 
 
                 <!-- SSH File Path Key -->
-                <md-content layout-padding layout="row" layout-sm="column" > 
+                <md-content layout-padding layout="row" layout-sm="column" ng-show="global_credential_group == 'SSH Private Key Path'"> 
                 <!-- ng-show="sshCredentials" -->
                     <label style="margin-top:10px">SSH Private Key Path</label>
                     <input type="file" id="ssh" style="margin-top:10px;margin-left:20px">
                 </md-content>
+                
+                </div>
+
 
                  <!-- Settings for Log Generation -->
                 <md-content layout-padding layout="row" layout-sm="column" > 
@@ -156,7 +161,7 @@
                     </div>
 
                 </md-content>
-
+      
               </md-card-content>
         </md-card>
 
@@ -291,6 +296,8 @@ var app = angular.module('myApp', ['ngMaterial','xeditable']);
 app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log, $filter, $http, $q) {
 
   $scope.isTemplateDisabled = true;
+  $scope.global_credentials = true;
+  $scope.global_credential_group = "User Credentials";
 
 	$scope.pageOneVisible = true;
 	$scope.pageTwoVisible = false;
