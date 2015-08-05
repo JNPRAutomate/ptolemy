@@ -101,10 +101,12 @@
                 <!-- SSH File Path Key -->
                 <md-content layout-padding layout="row" layout-sm="column" ng-show="global_credential_group == 'SSH Private Key Path'"> 
                 <!-- ng-show="sshCredentials" -->
-                    <label style="margin-top:10px">SSH Private Key Path</label>
+                    <label style="margin-top:10px">Username</label>
+                    <input id="username" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.username">
+                    <label style="margin-top:10px;margin-left:10px">SSH Private Key Path</label>
                     <input type="file" id="ssh" style="margin-top:10px;margin-left:20px">
                 </md-content>
-                
+
                 </div>
 
 
