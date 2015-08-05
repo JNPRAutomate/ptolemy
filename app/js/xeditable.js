@@ -148,7 +148,7 @@ angular.module('xeditable').directive('editableChecklist', [
     });
 }]);
 /*
-Input types: text|email|tel|number|url|search|color|date|datetime|time|month|week
+Input types: text|email|tel|number|url|search|color|date|datetime|time|month|week|password
 */
 
 (function() {
@@ -526,6 +526,11 @@ angular.module('xeditable').factory('editableController',
 
     //show
     self.show = function() {
+
+      // Toggle all the editable and non editable fields
+      $scope.editableTable = !$scope.editableTable;
+
+
       // set value of scope.$data
       self.setLocalValue();
 
@@ -563,6 +568,10 @@ angular.module('xeditable').factory('editableController',
 
     // cancel
     self.cancel = function() {
+
+      // Toggle all the editable and non editable fields
+      $scope.editableTable = !$scope.editableTable;
+
       // oncancel
       self.oncancel();
       // don't call hide() here as it called in form's code
@@ -677,6 +686,9 @@ angular.module('xeditable').factory('editableController',
     };
 
     self.save = function() {
+      // Toggle all the editable and non editable fields
+      $scope.editableTable = !$scope.editableTable;
+      
       valueGetter.assign($scope.$parent, angular.copy(self.scope.$data));
 
       // no need to call handleEmpty here as we are watching change of model value
@@ -1557,6 +1569,7 @@ angular.module('xeditable').factory('editableThemes', function() {
           case 'editableEmail':
           case 'editableTel':
           case 'editableNumber':
+          case 'editablePassword':
           case 'editableUrl':
           case 'editableSearch':
           case 'editableDate':

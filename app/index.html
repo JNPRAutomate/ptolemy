@@ -55,7 +55,8 @@
         <md-card>
               <md-card-content>
                 <h2 class="md-title">Configuration</h2>
-                <md-switch class="md-primary" md-no-ink ng-model="templateSwitch" ng-change="onTemplateSwitchChange(templateSwitch)">Develop using Existing Template</md-switch>
+                <md-switch class="md-primary" md-no-ink ng-model="templateSwitch" ng-change="onTemplateSwitchChange(templateSwitch)">
+                Develop using Existing Template</md-switch>
                 <label for="file-input" style="margin-left:20px">Browse Template</label>  
                 <input id="file-input" style="margin-left:10px" type="file" ng-disabled="isTemplateDisabled">
 
@@ -63,8 +64,8 @@
                 </md-card-content>
           </md-card>
           <section layout="row" layout-sm="column" layout-align="center center">
-              <md-button class="md-raised md-primary" ng-click="PageTwo()" > Next </md-button>
-             <div class="label" style="visibility: hidden">Raised</div>
+              <md-button class="md-raised md-primary" ng-click="PageTwo()" ng-show="isTemplateDisabled == true"> Skip </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageTwo()" ng-show="isTemplateDisabled == false"> Execute </md-button>
           </section> 
 
       </div>
@@ -119,27 +120,27 @@
                           <legend>Output Formats</legend>
                           <div layout="row" layout-wrap>
                            <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="DOT" flex="50">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format.dot" aria-label="DOT" flex="50" ng-value="DOT">
                             DOT
                            </md-checkbox>
                            </div>
                             <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="JSON" flex="50" >
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format.json" aria-label="JSON" flex="50" ng-value="JSON">
                               JSON
                            </md-checkbox>
                            </div>
                             <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="SVG" flex="50">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format.svg" aria-label="SVG" flex="50" ng-value="SVG">
                               SVG
                            </md-checkbox>
                            </div>
                             <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="PDF" flex="50">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format.pdf" aria-label="PDF" flex="50" ng-value="PDF">
                               PDF
                            </md-checkbox>
                            </div>
                             <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="PNG" flex="50">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="format.png" aria-label="PNG" flex="50" ng-value="PNG">
                               PNG
                            </md-checkbox>
                            </div>
@@ -151,10 +152,10 @@
                         <fieldset class="standard" flex>
                           <legend>Logs</legend>
                           <div layout="row" layout-wrap>
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="Generate Logs Per Device">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="logs.device" aria-label="Generate Logs Per Device">
                             Generate Logs Per Device
                            </md-checkbox>
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format" aria-label="Generate Global Logs" >
+                           <md-checkbox md-no-ink class="md-primary" ng-model="logs.global" aria-label="Generate Global Logs" >
                             Generate Global Logs
                            </md-checkbox>
                           </div>
@@ -191,9 +192,10 @@
 
               		  <form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()">
 
+
             			    <!-- table -->
-            			    <table class="table table-bordered table-hover table-condensed" border=1>
-            			      <tr style="font-weight: bold">
+            			    <table class="table table-bordered table-hover table-condensed">
+            			      <tr style="font-weight: bold" align="center">
             			        <td style="width:19%">Hostname</td>
             			        <td style="width:18%">Username</td>
             			        <td style="width:18%">Password</td>
@@ -201,34 +203,34 @@
                           <td style="width:3%">Port</td>
             			        <td style="width:12%"><span ng-show="tableform.$visible">Action</span></td>
             			      </tr>
-            			      <tr ng-repeat="device in connectionDetails">
+            			      <tr ng-repeat="device in connectionDetails" align="center">
             			        <td>
             			          <!-- editable username (text with validation) -->
-            			          <span editable-text="device.hostname" e-form="tableform">
+            			          <span editable-text="device.hostname" e-form="tableform" ng-show="editableTable == false">
             			            {{ device.hostname }}
             			          </span>
             			        </td>
             			        <td>
             			          <!-- editable status (select-local) -->
-            			          <span editable-text="device.username" e-form="tableform">
+            			          <span editable-text="device.username" e-form="tableform" ng-show="editableTable == false">
             			            {{ device.username }}
             			          </span>
             			        </td>
             			        <td>
             			          <!-- editable group (select-remote) -->
-            			          <span editable-password="device.password" e-form="tableform">
+            			          <span editable-password="device.password" e-form="tableform" ng-show="editableTable == false">
             			            <input type="password" name="lname" disabled value="{{ device.password }}">
             			          </span>
             			        </td>
                           <td>
                             <!-- editable group (select-remote) -->
-                            <span editable-text="device.path" e-form="tableform">
+                            <span editable-text="device.path" e-form="tableform" ng-show="editableTable == false">
                               {{ device.path }}
                             </span>
                           </td>
                           <td>
                             <!-- editable group (select-remote) -->
-                            <span editable-text="device.port" e-form="tableform">
+                            <span editable-text="device.port" e-form="tableform" ng-show="editableTable == false">
                               {{ device.port }}
                             </span>
                           </td>
@@ -244,7 +246,7 @@
             			    </div>
             			    <div class="btn-form" ng-show="tableform.$visible">
             			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="addUser()" class="md-raised md-primary">add row</md-button >
-            			      <md-button  type="submit" ng-disabled="tableform.$waiting" class="md-raised md-primary">save</md-button >
+            			      <md-button  type="submit" ng-disabled="tableform.$waiting" ng-click="tableform.$save()" class="md-raised md-primary">save</md-button >
             			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="md-raised md-primary">cancel</md-button >
             			    </div> 
         			    
@@ -301,7 +303,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
   $scope.global_credentials = true;
   $scope.global_credential_group = "User Credentials";
   $scope.passwordField = "password";
-  
+
 	$scope.pageOneVisible = true;
 	$scope.pageTwoVisible = false;
 	$scope.pageThreeVisible = false;
@@ -337,6 +339,11 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
     $scope.isTemplateDisabled = !switchValue
   }
 
+  $scope.editableTable = false;
+
+  $scope.configuration = [];
+
+
   $scope.connectionDetails = [
   {hostname: 'cdbu-sol-vcf-5100-24q-01.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
   {hostname: 'cdbu-sol-vcf-5100-24q-02.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
@@ -349,6 +356,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
   {hostname: 'cdbu-sol-vcf-5100-48s-05.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
   {hostname: 'cdbu-sol-vcf-5100-48s-06.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''}
   ];
+
 
   $scope.users = [
     {id: 1, name: 'awesome user1', status: 2, group: 4, groupName: 'admin'},
