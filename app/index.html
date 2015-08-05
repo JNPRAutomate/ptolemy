@@ -93,8 +93,8 @@
                     <label style="margin-top:10px">Username</label>
                     <input id="username" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.username">
                     <label style="margin-top:10px;margin-left:10px">Password</label>
-                    <input id="password" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.password" type="password">
-                    <md-checkbox md-no-ink class="md-primary" ng-model="show" aria-label="Show Password" id="show_password"> Show Password</md-checkbox>
+                    <input id="password" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.password" type="{{passwordField}}">
+                    <md-checkbox md-no-ink class="md-primary" ng-model="passwordField" aria-label="Show Password" id="show_password" ng-true-value="'text'" ng-false-value="'password'"> Show Password</md-checkbox>
                 </md-content>
 
 
@@ -300,7 +300,8 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
   $scope.isTemplateDisabled = true;
   $scope.global_credentials = true;
   $scope.global_credential_group = "User Credentials";
-
+  $scope.passwordField = "password";
+  
 	$scope.pageOneVisible = true;
 	$scope.pageTwoVisible = false;
 	$scope.pageThreeVisible = false;
