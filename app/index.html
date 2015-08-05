@@ -83,29 +83,15 @@
 
 
                 <div ng-show="global_credentials == true">
-                <md-radio-group ng-model="global_credential_group">
-                  <md-radio-button value="User Credentials" class="md-primary" style="display:inline">User Credentials</md-radio-button>
-                  <md-radio-button value="SSH Private Key Path" class="md-primary" style="display:inline"> SSH Private Key Path </md-radio-button>
-                </md-radio-group>
 
                 <!-- Username and Password If User Credentials is chosen -->
-                <md-content layout-padding layout="row" layout-sm="column" ng-show="global_credential_group == 'User Credentials'">
+                <md-content layout-padding layout="row" layout-sm="column">
                 <!-- ng-show="userCredentials" -->
                     <label style="margin-top:10px">Username</label>
                     <input id="username" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.username">
                     <label style="margin-top:10px;margin-left:10px">Password</label>
                     <input id="password" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.password" type="{{passwordField}}">
                     <md-checkbox md-no-ink class="md-primary" ng-model="passwordField" aria-label="Show Password" id="show_password" ng-true-value="'text'" ng-false-value="'password'"> Show Password</md-checkbox>
-                </md-content>
-
-
-                <!-- SSH File Path Key -->
-                <md-content layout-padding layout="row" layout-sm="column" ng-show="global_credential_group == 'SSH Private Key Path'"> 
-                <!-- ng-show="sshCredentials" -->
-                    <label style="margin-top:10px">Username</label>
-                    <input id="username" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.username">
-                    <label style="margin-top:10px;margin-left:10px">SSH Private Key Path</label>
-                    <input type="file" id="ssh" style="margin-top:10px;margin-left:20px">
                 </md-content>
 
                 </div>
@@ -195,15 +181,14 @@
 
             			    <!-- table -->
             			    <table class="table table-bordered table-hover table-condensed">
-            			      <tr style="font-weight: bold" align="center">
-            			        <td style="width:19%">Hostname</td>
-            			        <td style="width:18%">Username</td>
-            			        <td style="width:18%">Password</td>
-                          <td style="width:30%">SSH Private Key Path</td>
-                          <td style="width:3%">Port</td>
-            			        <td style="width:12%"><span ng-show="tableform.$visible">Action</span></td>
+            			      <tr style="font-weight: bold">
+            			        <td style="width:40%">Hostname</td>
+            			        <td style="width:25%">Username</td>
+            			        <td style="width:25%">Password</td>
+                          <td style="width:10%">Port</td>
+            			        <td style="width:20%"><span ng-show="tableform.$visible">Action</span></td>
             			      </tr>
-            			      <tr ng-repeat="device in connectionDetails" align="center">
+            			      <tr ng-repeat="device in connectionDetails">
             			        <td>
             			          <!-- editable username (text with validation) -->
             			          <span editable-text="device.hostname" e-form="tableform" ng-show="editableTable == false">
@@ -222,12 +207,6 @@
             			            <input type="password" name="lname" disabled value="{{ device.password }}">
             			          </span>
             			        </td>
-                          <td>
-                            <!-- editable group (select-remote) -->
-                            <span editable-text="device.path" e-form="tableform" ng-show="editableTable == false">
-                              {{ device.path }}
-                            </span>
-                          </td>
                           <td>
                             <!-- editable group (select-remote) -->
                             <span editable-text="device.port" e-form="tableform" ng-show="editableTable == false">
@@ -301,7 +280,6 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
 
   $scope.isTemplateDisabled = true;
   $scope.global_credentials = true;
-  $scope.global_credential_group = "User Credentials";
   $scope.passwordField = "password";
 
 	$scope.pageOneVisible = true;
