@@ -171,7 +171,7 @@ class L1NetworkFlow():
 		return neighbour_dict
 
 	def generate_graph(self, dictionary, live_nodes):
-		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="0.7", rankdir = "LR")
+		lldp_neighbours_graph = AGraph(strict = False, directed = True, overlap = "scale", splines="ortho", nodesep="0.5", rankdir = "LR")
 		added = set()
 		edge_count ={}
 		added_edges = {}
@@ -232,7 +232,7 @@ class L1NetworkFlow():
 		# Resize all the nodes based on the number of incoming and outgoing nodes edges
 		for node in lldp_neighbours_graph.nodes():
 			if edge_count[node] > 0:
-				node.attr['height'] = edge_count[node]
+				node.attr['height'] = 0.6 * edge_count[node]
 				node.attr['width'] = 0.6 * edge_count[node]
 			else:
 				node.attr['height'] = 2
@@ -262,11 +262,51 @@ class L1NetworkFlow():
 		print ''
 		print "Wrote graph to "+graph_file_name 
 
+		
+			
+		#neato, dot, twopi, circo, fdp, nop, wc, acyclic, gvpr, gvcolor, ccomps, sccmap, tred, sfdp.
+		# Write the graph to a SVG file
+		graph_file_name = self.get_generated_filename("dot","svg")
+		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
+		print ''
+		print "Wrote graph to DOT SVG file "+graph_file_name 
+
+		# # Write the graph to a SVG file
+		# graph_file_name = self.get_generated_filename("twopi","svg")
+		# graph.draw(graph_file_name,prog='twopi') # draw to png using circo
+		# print ''
+		# print "Wrote graph to DOT SVG file "+graph_file_name
+
+		# # Write the graph to a SVG file
+		# graph_file_name = self.get_generated_filename("fdp","svg")
+		# graph.draw(graph_file_name,prog='fdp') # draw to png using circo
+		# print ''
+		# print "Wrote graph to DOT SVG file "+graph_file_name
+
+		# Write the graph to a SVG file
+		graph_file_name = self.get_generated_filename("pdf","pdf")
+		graph.draw(graph_file_name,prog='quartz') # draw to png using circo
+		print ''
+		print "Wrote graph to PDF SVG file "+graph_file_name
+
+		# Write the graph to a SVG file
+		graph_file_name = self.get_generated_filename("png","png")
+		graph.draw(graph_file_name,prog='dot') # draw to png using circo
+		print ''
+		print "Wrote graph to PDF SVG file "+graph_file_name
+
+		# Write the graph to a PNG file
+		graph_file_name = self.get_generated_filename("png","png")
+		graph.draw(graph_file_name) # draw to png using circo
+		print ''
+		print "Wrote graph to DOT SVG file "+graph_file_name
+
 		# Write the graph to a dot file
 		# graph_file_name = self.get_generated_filename("lldp_neighbours_graph_","png")
 		# graph.draw(graph_file_name, prog="neato") # draw to png using circo
 		# print ''
 		# print "Wrote graph to image file "+graph_file_name 
+		
 
 
 	def write_json(self, dictionary):

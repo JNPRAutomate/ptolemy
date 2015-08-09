@@ -65,7 +65,7 @@
           </md-card>
           <section layout="row" layout-sm="column" layout-align="center center">
               <md-button class="md-raised md-primary" ng-click="PageTwo()" ng-show="isTemplateDisabled == true"> Skip </md-button>
-              <md-button class="md-raised md-primary" ng-click="PageTwo()" ng-show="isTemplateDisabled == false"> Execute </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageTwo()" ng-show="isTemplateDisabled == false"> Generate Graph </md-button>
           </section> 
 
       </div>
@@ -88,9 +88,9 @@
                 <md-content layout-padding layout="row" layout-sm="column">
                 <!-- ng-show="userCredentials" -->
                     <label style="margin-top:10px">Username</label>
-                    <input id="username" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.username">
+                    <input id="username" style="height:30px;margin-top:5px;margin-left:5px" ng-model="global_user.username">
                     <label style="margin-top:10px;margin-left:10px">Password</label>
-                    <input id="password" style="height:30px;margin-top:5px;margin-left:5px" ng-model="user.password" type="{{passwordField}}">
+                    <input id="password" style="height:30px;margin-top:5px;margin-left:5px" ng-model="global_user.password" type="{{passwordField}}">
                     <md-checkbox md-no-ink class="md-primary" ng-model="passwordField" aria-label="Show Password" id="show_password" ng-true-value="'text'" ng-false-value="'password'"> Show Password</md-checkbox>
                 </md-content>
 
@@ -138,10 +138,10 @@
                         <fieldset class="standard" flex>
                           <legend>Logs</legend>
                           <div layout="row" layout-wrap>
-                           <md-checkbox md-no-ink class="md-primary" ng-model="logs.device" aria-label="Generate Logs Per Device">
+                           <md-checkbox md-no-ink class="md-primary" ng-model="log_config.device" aria-label="Generate Logs Per Device">
                             Generate Logs Per Device
                            </md-checkbox>
-                           <md-checkbox md-no-ink class="md-primary" ng-model="logs.global" aria-label="Generate Global Logs" >
+                           <md-checkbox md-no-ink class="md-primary" ng-model="log_config.global" aria-label="Generate Global Logs" >
                             Generate Global Logs
                            </md-checkbox>
                           </div>
@@ -188,7 +188,7 @@
                           <td style="width:10%">Port</td>
             			        <td style="width:20%"><span ng-show="tableform.$visible">Action</span></td>
             			      </tr>
-            			      <tr ng-repeat="device in connectionDetails">
+            			      <tr ng-repeat="device in connectionDetails | filter : filterConnections">
             			        <td>
             			          <!-- editable username (text with validation) -->
             			          <span editable-text="device.hostname" e-form="tableform" ng-show="editableTable == false">
@@ -213,7 +213,7 @@
                               {{ device.port }}
                             </span>
                           </td>
-            			        <td><md-button class="md-raised md-warn" ng-show="tableform.$visible" ng-click="deleteUser(user.id)">Delete</md-button></td>
+            			        <td><md-button class="md-raised md-warn" ng-show="tableform.$visible" ng-click="deleteConnectionDetail(device.hostname)">Delete</md-button></td>
             			      </tr>
             			    </table>
 
@@ -224,8 +224,8 @@
             			      </md-button >
             			    </div>
             			    <div class="btn-form" ng-show="tableform.$visible">
-            			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="addUser()" class="md-raised md-primary">add row</md-button >
-            			      <md-button  type="submit" ng-disabled="tableform.$waiting" ng-click="tableform.$save()" class="md-raised md-primary">save</md-button >
+            			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="addNewConnectionDetail()" class="md-raised md-primary">add device</md-button >
+            			      <md-button  type="submit" ng-disabled="tableform.$waiting" class="md-raised md-primary">save</md-button >
             			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="md-raised md-primary">cancel</md-button >
             			    </div> 
         			    
@@ -236,13 +236,48 @@
 
           <section layout="row" layout-sm="column" layout-align="center center">
               <md-button class="md-raised md-primary" ng-click="PageTwo()" > Back </md-button>
-              <md-button class="md-raised md-primary" ng-click="PageOne()" > Next </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageFour()" > Generate Graph </md-button>
              <div class="label" style="visibility: hidden">Raised</div>
           </section> 
 
       </div>
       <!-- End of Page 3 -->
 
+
+      <!-- Page 4 - Content showing Generated graph and other options -->
+      <div layout="column" layout-fill layout-align="top center" ng-show="pageFourVisible">
+       <md-card>
+              <md-card-content>
+                <div>
+                  <h1 class="md-title">Network Topology</h1>
+                  <span>
+                  <label>View As</label>
+                  <md-select placeholder="Content Type" ng-model="view_format">
+                    <md-option ng-repeat="view_format in output_formats" value="{{view_format}}">{{view_format.name}}</md-option>
+                  </md-select>
+                  <md-button class="md-raised md-primary" ng-click="" > Download </md-button>
+                  <md-button class="md-raised md-primary" ng-click="" > Download All Formats </md-button>
+                  </span>
+                
+                  <div id='content_view' style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
+                    <svg ng-show="view_format.format == 'svg'">
+                    <!-- /Users/animeshk/_Animesh/Workspaces/Git/ptolemy/script/generated -->
+                      <img src="svg/dot2015_08_06_184100.svg" alt="LLDP Image in SVG">
+                    </svg>
+                  </div>
+                </div>
+              </md-card-content>
+          </md-card>
+
+          <section layout="row" layout-sm="column" layout-align="center center">
+              <md-button class="md-raised md-primary" ng-click="PageOne()" > Start Again </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageThree()" > Back </md-button>
+              <md-button class="md-raised md-primary" ng-click="" > Save Template </md-button>
+             <div class="label" style="visibility: hidden">Raised</div>
+          </section> 
+
+      </div>
+      <!-- End of Page 4 -->
 
 
      <div flex></div>
@@ -251,7 +286,7 @@
 
 
     <!-- Right Side Navigator -->
-    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+    <!-- <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
       <md-toolbar class="md-theme-light">
         <h1 class="md-toolbar-tools">Sidenav Right</h1>
       </md-toolbar>
@@ -267,7 +302,7 @@
           Close Sidenav Right
         </md-button>
       </md-content>
-    </md-sidenav>
+    </md-sidenav> -->
     <!-- End of Right side navigator -->
 
   </section>
@@ -282,6 +317,10 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
   $scope.global_credentials = true;
   $scope.passwordField = "password";
 
+  $scope.editableTable = false;
+
+  $scope.configuration = [];
+
 	$scope.pageOneVisible = true;
 	$scope.pageTwoVisible = false;
 	$scope.pageThreeVisible = false;
@@ -290,37 +329,125 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
 		$scope.pageOneVisible = true;
 		$scope.pageTwoVisible = false;
 		$scope.pageThreeVisible = false;
+    $scope.pageFourVisible = false;
     }
 
 	$scope.PageTwo = function () {
 		$scope.pageOneVisible = false;
 		$scope.pageTwoVisible = true;
 		$scope.pageThreeVisible = false;
+    $scope.pageFourVisible = false;
 
-		$http.post("/asd.svg", {file1:$scope.tracediffFile1, file2:$scope.tracediffFile2})
-      .success(function (response) {
-        $scope.svgFile = response;
+    // Clear all the configuration since it will be updated on press of next
+    $scope.configuration = [];
+    $scope.output_formats = [];
+    $scope.logs = [];
 
-        angular.element( document.querySelector( '#svgg' ) ).append($scope.svgFile);
-		$scope.$apply ();
-      });
+
+
+    var request = $http({
+                    method: "POST",
+                    url: "/ptolemy",
+                    data: $scope.configuration
+                });
+    // Store the data-dump of the FORM scope.
+    request.success(
+        function( html ) {
+            $scope.cfdump = html;
+        }
+    );
+
+      
+		// $http.post("/asd.svg", {file1:$scope.tracediffFile1, file2:$scope.tracediffFile2})
+  //     .success(function (response) {
+  //       $scope.svgFile = response;
+
+  //       angular.element( document.querySelector( '#svgg' ) ).append($scope.svgFile);
+		// $scope.$apply ();
+  //     });
     }
 
 	$scope.PageThree = function () {
-		$scope.pageOneVisible = false;
-		$scope.pageTwoVisible = false;
-		$scope.pageThreeVisible = true;
+
+    //Update the dictionary with configuration details
+    $scope.output_formats = [];
+    $scope.logs = [];
+
+    // If Output format is checked, add it to supported formats
+    angular.forEach($scope.format, function(value, key) {
+      if (value) {
+        $scope.output_formats.push({'format':key,'name':key.toUpperCase()});
+      };
+    });
+
+    // If any log type is checked, add it to configuration
+    angular.forEach($scope.log_config, function(value, key) {
+      if (value) {
+        $scope.logs.push(key);
+      };
+    });
+
+    if ($scope.global_credentials) {
+      $scope.user_credentials = {
+        'username' : $scope.global_user.username,
+        'password' : $scope.global_user.password
+      };
+      $scope.configuration.push({
+        'Global Credentials' : $scope.user_credentials,
+        'Output Formats' : $scope.output_formats,
+        'Logs' : $scope.logs
+      });
+    } else {
+      $scope.configuration.push({
+        'Global Credentials' : 'None',
+        'Output Formats' : $scope.output_formats,
+        'Logs' : $scope.logs
+      });
+    };
+    $scope.pageOneVisible = false;
+    $scope.pageTwoVisible = false;
+    $scope.pageThreeVisible = true;
+    $scope.pageFourVisible = false;
+
+    }
+
+
+  $scope.PageFour = function () {
+    $scope.pageOneVisible = false;
+    $scope.pageTwoVisible = false;
+    $scope.pageThreeVisible = false;
+    $scope.pageFourVisible = true;
+
+
+    var request = $http({
+                    method: "POST",
+                    url: "/pageFour",
+                    data: {
+                        configuration: $scope.configuration
+                    }
+                });
+    // Store the data-dump of the FORM scope.
+    request.success(
+        function( reponse ) {
+            $scope.resp = response;
+            /*
+            $scope.svgFile = response;
+            
+            if svg file do ::
+            angular.element( document.querySelector( '#svgg' ) ).append($scope.svgFile);
+            $scope.$apply ();
+
+            for pdf it will be something else.
+        */
+        }
+    );
+
     }
 
 
   $scope.onTemplateSwitchChange = function(switchValue) {
     $scope.isTemplateDisabled = !switchValue
   }
-
-  $scope.editableTable = false;
-
-  $scope.configuration = [];
-
 
   $scope.connectionDetails = [
   {hostname: 'cdbu-sol-vcf-5100-24q-01.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
@@ -335,105 +462,74 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
   {hostname: 'cdbu-sol-vcf-5100-48s-06.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''}
   ];
 
-
-  $scope.users = [
-    {id: 1, name: 'awesome user1', status: 2, group: 4, groupName: 'admin'},
-    {id: 2, name: 'awesome user2', status: undefined, group: 3, groupName: 'vip'},
-    {id: 3, name: 'awesome user3', status: 2, group: null}
-  ]; 
-
-  $scope.statuses = [
-    {value: 1, text: 'status1'},
-    {value: 2, text: 'status2'},
-    {value: 3, text: 'status3'},
-    {value: 4, text: 'status4'}
-  ]; 
-
-  $scope.groups = [];
-  $scope.loadGroups = function() {
-    return $scope.groups.length ? null : $http.get('/groups').success(function(data) {
-      $scope.groups = data;
-    });
-  };
-
-  $scope.showGroup = function(user) {
-    if(user.group && $scope.groups.length) {
-      var selected = $filter('filter')($scope.groups, {id: user.group});
-      return selected.length ? selected[0].text : 'Not set';
-    } else {
-      return user.groupName || 'Not set';
-    }
-  };
-
-  $scope.showStatus = function(user) {
-    var selected = [];
-    if(user.status) {
-      selected = $filter('filter')($scope.statuses, {value: user.status});
-    }
-    return selected.length ? selected[0].text : 'Not set';
-  };
-
-  $scope.checkName = function(data, id) {
-    if (id === 2 && data !== 'awesome') {
-      return "Username 2 should be `awesome`";
-    }
-  };
-
   // filter users to show
-  $scope.filterUser = function(user) {
-    return user.isDeleted !== true;
+  $scope.filterConnections = function(device) {
+    return device.isDeleted !== true;
   };
 
-  // mark user as deleted
-  $scope.deleteUser = function(id) {
-    var filtered = $filter('filter')($scope.users, {id: id});
+  // mark device as deleted
+  $scope.deleteConnectionDetail = function(hostname) {
+    var filtered = $filter('filter')($scope.connectionDetails, {hostname: hostname});
     if (filtered.length) {
       filtered[0].isDeleted = true;
     }
   };
 
-  // add user
-  $scope.addUser = function() {
-    $scope.users.push({
-      id: $scope.users.length+1,
-      name: '',
-      status: null,
-      group: null,
+  // add device
+  $scope.addNewConnectionDetail = function() {
+    $scope.connectionDetails.push({
+      hostname: '', 
+      username: '', 
+      password: '', 
+      path: '', 
+      port: '',
       isNew: true
     });
   };
 
   // cancel all changes
   $scope.cancel = function() {
-    for (var i = $scope.users.length; i--;) {
-      var user = $scope.users[i];    
+    for (var i = $scope.connectionDetails.length; i--;) {
+      var device = $scope.connectionDetails[i];    
       // undelete
-      if (user.isDeleted) {
-        delete user.isDeleted;
+      if (device.isDeleted) {
+        delete device.isDeleted;
       }
       // remove new 
-      if (user.isNew) {
-        $scope.users.splice(i, 1);
+      if (device.isNew) {
+        $scope.connectionDetails.splice(i, 1);
       }      
     };
+
+    // for (var i = $scope.users.length; i--;) {
+    //   var user = $scope.users[i];    
+    //   // undelete
+    //   if (user.isDeleted) {
+    //     delete user.isDeleted;
+    //   }
+    //   // remove new 
+    //   if (user.isNew) {
+    //     $scope.users.splice(i, 1);
+    //   }      
+    // };
   };
 
   // save edits
   $scope.saveTable = function() {
     var results = [];
-    for (var i = $scope.users.length; i--;) {
-      var user = $scope.users[i];
+    for (var i = $scope.connectionDetails.length; i--;) {
+      var device = $scope.connectionDetails[i];
       // actually delete user
-      if (user.isDeleted) {
-        $scope.users.splice(i, 1);
+      if (device.isDeleted) {
+        $scope.connectionDetails.splice(i, 1);
       }
       // mark as not new 
-      if (user.isNew) {
-        user.isNew = false;
+      if (device.isNew) {
+        device.isNew = false;
       }
 
       // send on server
-      results.push($http.post('/saveUser', user));      
+      //results.push($http.post('/saveUser', device));      
     }
 
     return $q.all(results);
