@@ -5,6 +5,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
+  <!-- JQuery Min for File Upload and Reading content of file -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <!-- Script for Editable table and Text Area -->
   <script src="js/xeditable.js"></script>
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
@@ -172,11 +175,18 @@
                     <md-content layout-padding layout="row" layout-sm="column" > 
                     <!-- ng-show="sshCredentials" -->
                         <label style="margin-bottom:20px">Connection Details</label>
-                        <input type="file" id="connection_details" style="margin-bottom:20px;margin-left:10px">
+                        <input type="file" id="connection_details" style="margin-bottom:20px;margin-left:10px" on-read-file="loadConnectionDetails($fileContent)">
+
+                        <!-- File Content -->
+                        <!-- <div ng-if="content">
+                            <h2>File content is:</h2>
+                            <pre>{{ content }}</pre>
+                        </div> -->
+                        <!-- Ends -->
                     </md-content>
 
 
-              		  <form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()">
+              		  <form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()" ng-show="connectionDetailsUploaded == true">
 
 
             			    <!-- table -->
@@ -225,7 +235,7 @@
             			    </div>
             			    <div class="btn-form" ng-show="tableform.$visible">
             			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="addNewConnectionDetail()" class="md-raised md-primary">add device</md-button >
-            			      <md-button  type="submit" ng-disabled="tableform.$waiting" class="md-raised md-primary">save</md-button >
+            			      <md-button  type="submit" ng-disabled="tableform.$waiting" class="md-raised md-primary">confirm</md-button >
             			      <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="md-raised md-primary">cancel</md-button >
             			    </div> 
         			    
@@ -257,6 +267,7 @@
                   </md-select>
                   <md-button class="md-raised md-primary" ng-click="" > Download </md-button>
                   <md-button class="md-raised md-primary" ng-click="" > Download All Formats </md-button>
+                  <md-button class="md-raised md-primary" ng-click="" > Save Configuration as Template </md-button>
                   </span>
                 
                   <div id='content_view' style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
@@ -270,9 +281,8 @@
           </md-card>
 
           <section layout="row" layout-sm="column" layout-align="center center">
-              <md-button class="md-raised md-primary" ng-click="PageOne()" > Start Again </md-button>
               <md-button class="md-raised md-primary" ng-click="PageThree()" > Back </md-button>
-              <md-button class="md-raised md-primary" ng-click="" > Save Template </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageOne()" > Start Again </md-button>
              <div class="label" style="visibility: hidden">Raised</div>
           </section> 
 
@@ -318,8 +328,11 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
   $scope.passwordField = "password";
 
   $scope.editableTable = false;
+  $scope.connectionDetailsUploaded = false;
 
   $scope.configuration = [];
+
+  $scope.connectionDetails = [];
 
 	$scope.pageOneVisible = true;
 	$scope.pageTwoVisible = false;
@@ -449,18 +462,47 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
     $scope.isTemplateDisabled = !switchValue
   }
 
-  $scope.connectionDetails = [
-  {hostname: 'cdbu-sol-vcf-5100-24q-01.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
-  {hostname: 'cdbu-sol-vcf-5100-24q-02.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
-  {hostname: 'cdbu-sol-vcf-5100-24q-03.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
-  {hostname: 'cdbu-sol-vcf-5100-24q-04.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
-  {hostname: 'cdbu-sol-vcf-5100-48s-01.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
-  {hostname: 'cdbu-sol-vcf-5100-48s-02.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},    
-  {hostname: 'cdbu-sol-vcf-5100-48s-03.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
-  {hostname: 'cdbu-sol-vcf-5100-48s-04.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
-  {hostname: 'cdbu-sol-vcf-5100-48s-05.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
-  {hostname: 'cdbu-sol-vcf-5100-48s-06.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''}
-  ];
+
+
+  $scope.loadConnectionDetails = function($fileContent){
+    //Parse the file content and put it into connection details
+    $scope.connectionDetails = [];
+    $scope.fileArray = $fileContent.split("\n");
+    // Ignore Line 1 since it will always contain the Headers
+    for (index = 1; index < $scope.fileArray.length; index++) {
+      var tempArr = $scope.fileArray[index].split(",")
+      //Run another for loop to build the configuration
+      if (tempArr[0] && tempArr[1]) {
+        $scope.connectionDetails.push({
+          hostname: tempArr[0],
+          username: tempArr[1],
+          password: tempArr[2],
+          path: tempArr[3],
+          port: tempArr[4]
+        });
+      };
+    }
+    $scope.connectionDetailsUploaded = true;
+    $scope.content = $fileContent;
+  };
+
+  // $scope.showContent = function($fileContent){
+  //       $scope.content = $fileContent;
+  // };
+  
+
+  // $scope.connectionDetails = [
+  // {hostname: 'cdbu-sol-vcf-5100-24q-01.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  // {hostname: 'cdbu-sol-vcf-5100-24q-02.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  // {hostname: 'cdbu-sol-vcf-5100-24q-03.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
+  // {hostname: 'cdbu-sol-vcf-5100-24q-04.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  // {hostname: 'cdbu-sol-vcf-5100-48s-01.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  // {hostname: 'cdbu-sol-vcf-5100-48s-02.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},    
+  // {hostname: 'cdbu-sol-vcf-5100-48s-03.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},  
+  // {hostname: 'cdbu-sol-vcf-5100-48s-04.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
+  // {hostname: 'cdbu-sol-vcf-5100-48s-05.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''},   
+  // {hostname: 'cdbu-sol-vcf-5100-48s-06.dcbg.juniper.net', username: 'root', password: 'Embe1mpls', path: '', port: ''}
+  // ];
 
   // filter users to show
   $scope.filterConnections = function(device) {
@@ -533,6 +575,29 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
     }
 
     return $q.all(results);
+  };
+});
+
+
+app.directive('onReadFile', function ($parse) {
+  return {
+    restrict: 'A',
+    scope: false,
+    link: function(scope, element, attrs) {
+            var fn = $parse(attrs.onReadFile);
+            
+      element.on('change', function(onChangeEvent) {
+        var reader = new FileReader();
+                
+        reader.onload = function(onLoadEvent) {
+          scope.$apply(function() {
+            fn(scope, {$fileContent:onLoadEvent.target.result});
+          });
+        };
+
+        reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+      });
+    }
   };
 });
 
