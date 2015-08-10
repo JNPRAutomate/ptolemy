@@ -33,6 +33,12 @@
   <meta name="theme-color" content="#ffffff">
   <!-- Favicon ends -->
 
+  <style type="text/css">
+  .editable-error{
+    color: red
+  }
+  </style>
+
 </head>
 <body>
 <div ng-controller="AppCtrl" layout="column">
@@ -195,7 +201,7 @@
                     </md-content>
 
 
-              		  <form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()" ng-show="connectionDetailsUploaded == true">
+              		  <form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()">
 
 
             			    <!-- table -->
@@ -210,19 +216,19 @@
             			      <tr ng-repeat="device in connectionDetails | filter : filterConnections">
             			        <td>
             			          <!-- editable username (text with validation) -->
-            			          <span editable-text="device.hostname" e-form="tableform" ng-show="editableTable == false">
+            			          <span editable-text="device.hostname" e-form="tableform" ng-show="editableTable == false" onbeforesave="checkHostName($data, device.hostname)">
             			            {{ device.hostname }}
             			          </span>
             			        </td>
             			        <td>
             			          <!-- editable status (select-local) -->
-            			          <span editable-text="device.username" e-form="tableform" ng-show="editableTable == false">
+            			          <span editable-text="device.username" e-form="tableform" ng-show="editableTable == false" onbeforesave="checkUserName($data, device.username)">
             			            {{ device.username }}
             			          </span>
             			        </td>
             			        <td>
             			          <!-- editable group (select-remote) -->
-            			          <span editable-password="device.password" e-form="tableform" ng-show="editableTable == false">
+            			          <span editable-password="device.password" e-form="tableform" ng-show="editableTable == false" onbeforesave="checkPassword($data, device.password)">
             			            <input type="password" name="lname" disabled value="{{ device.password }}">
             			          </span>
             			        </td>
@@ -255,7 +261,7 @@
 
           <section layout="row" layout-sm="column" layout-align="center center">
               <md-button class="md-raised md-primary" ng-click="PageTwo()" > Back </md-button>
-              <md-button class="md-raised md-primary" ng-click="PageFour()" > Generate Graph </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageFour($event)" > Generate Graph </md-button>
              <div class="label" style="visibility: hidden">Raised</div>
           </section> 
 
@@ -442,13 +448,15 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
           $scope.configuration.push({
             'Global Credentials' : $scope.user_credentials,
             'Output Formats' : $scope.output_formats,
-            'Logs' : $scope.logs
+            'Logs' : $scope.logs,
+            'Connection Details': ''
           });
         } else {
           $scope.configuration.push({
             'Global Credentials' : 'None',
             'Output Formats' : $scope.output_formats,
-            'Logs' : $scope.logs
+            'Logs' : $scope.logs,
+            'Connection Details': ''
           });
         };
         
@@ -509,17 +517,50 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     }
 
 
-  $scope.PageFour = function () {
-    $scope.pageOneVisible = false;
-    $scope.pageTwoVisible = false;
-    $scope.pageThreeVisible = false;
-    $scope.pageFourVisible = true;
+  $scope.checkHostName = function(data, hostname) {
+    if (!hostname) {
+      return "Please enter a valid hostname.";
+    }
+  };
 
-    var fd = new FormData();
-    fd.append("data", JSON.stringify($scope.configuration));
-    var request = new XMLHttpRequest();
-    request.open("POST", "/pageFour");
-    request.send(fd);
+  $scope.checkUserName = function(data, username) {
+    if (!$scope.global_credentials && !username) {
+      return "Please enter a valid username.";
+    }
+  };
+
+  $scope.checkPassword = function(data, password) {
+    if (!$scope.global_credentials && !password) {
+      return "Please enter a valid password.";
+    }
+  };
+
+  $scope.PageFour = function (ev) {
+    if($scope.connectionDetailsUploaded || ($scope.connectionDetails && $scope.connectionDetails.length > 0  && $scope.connectionDetails[0]['hostname'])){
+      $scope.pageOneVisible = false;
+      $scope.pageTwoVisible = false;
+      $scope.pageThreeVisible = false;
+      $scope.pageFourVisible = true;
+
+      // Push Connection Details to Configuration
+      $scope.configuration[0]['Connection Details'] = $scope.connectionDetails;
+
+      var fd = new FormData();
+      fd.append("data", JSON.stringify($scope.configuration));
+      var request = new XMLHttpRequest();
+      request.open("POST", "/pageFour");
+      request.send(fd);
+    } else {
+      $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.body))
+            .title('Device Configuration missing')
+            .content('You will have to upload a  file containing device connections or build a connection profile.')
+            .ariaLabel('Device Configuration')
+            .ok('OK')
+            .targetEvent(ev)
+        );
+    }
   }
     // var url = "/pageFour";
     // $http.post(url, fd, {
