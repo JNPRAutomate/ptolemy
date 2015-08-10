@@ -290,6 +290,7 @@
                     <!-- /Users/animeshk/_Animesh/Workspaces/Git/ptolemy/script/generated -->
                       <img src="svg/dot2015_08_06_184100.svg" alt="LLDP Image in SVG">
                     </svg>
+                    <embed ng-show="view_format.format == 'pdf'" src="pdf/pdf2015_08_07_160920.pdf">
                   </div>
                 </div>
               </md-card-content>
@@ -501,7 +502,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
    $scope.generateGraphFromTemplate =  function (template, ev) {
       if ($scope.templateUploaded) {
         $scope.configuration = template;
-        $scope.PageFour();
+        $scope.GenerateGraph();
       }
       else {
         $mdDialog.show(
@@ -537,6 +538,22 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 
   $scope.PageFour = function (ev) {
     if($scope.connectionDetailsUploaded || ($scope.connectionDetails && $scope.connectionDetails.length > 0  && $scope.connectionDetails[0]['hostname'])){
+      $scope.GenerateGraph();
+    } else {
+      $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.body))
+            .title('Device Configuration missing')
+            .content('You will have to upload a  file containing device connections or build a connection profile.')
+            .ariaLabel('Device Configuration')
+            .ok('OK')
+            .targetEvent(ev)
+        );
+    }
+  }
+
+
+  $scope.GenerateGraph = function (){
       $scope.pageOneVisible = false;
       $scope.pageTwoVisible = false;
       $scope.pageThreeVisible = false;
@@ -550,17 +567,6 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
       var request = new XMLHttpRequest();
       request.open("POST", "/pageFour");
       request.send(fd);
-    } else {
-      $mdDialog.show(
-          $mdDialog.alert()
-            .parent(angular.element(document.body))
-            .title('Device Configuration missing')
-            .content('You will have to upload a  file containing device connections or build a connection profile.')
-            .ariaLabel('Device Configuration')
-            .ok('OK')
-            .targetEvent(ev)
-        );
-    }
   }
     // var url = "/pageFour";
     // $http.post(url, fd, {
