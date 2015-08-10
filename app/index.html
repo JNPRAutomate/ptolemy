@@ -64,7 +64,7 @@
                 <label for="file-input" style="margin-left:20px">Browse Template</label>  
                 <input id="file-input" style="margin-left:10px" type="file" accept=".ptpl" ng-disabled="isTemplateDisabled" on-read-file="loadTemplate($fileContent)">
 
-                <md-button class="md-raised md-primary">Download Sample Template</md-button>
+                <md-button class="md-raised md-primary" ng-click="downloadSampleTemplate()">Download Sample Template</md-button>
                 </span>
                 <div ng-show="templateUploaded == true">
                   <!-- <span editable-textarea="template" ng-show="templateEditable == false"> -->
@@ -72,28 +72,19 @@
                     <pre>{{ template }}</pre>
                   <!-- </span> -->
 
-                  <!-- buttons -->
-                  <!-- <div class="btn-edit">
-                    <md-button  type="button" class="md-raised md-primary" ng-show="!tableform.$visible" ng-click="tableform.$show()">
-                      edit
-                    </md-button >
-                  </div>
-                  <div class="btn-form" ng-show="tableform.$visible">
-                    <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="addNewConnectionDetail()" class="md-raised md-primary">add device</md-button >
-                    <md-button  type="submit" ng-disabled="tableform.$waiting" class="md-raised md-primary">confirm</md-button >
-                    <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="md-raised md-primary">cancel</md-button >
-                  </div>  -->
-
                 </div>
 
 
                 </md-card-content>
           </md-card>
           <section layout="row" layout-sm="column" layout-align="center center">
-              <md-button class="md-raised md-primary" ng-click="PageTwo()" ng-show="isTemplateDisabled == true"> Skip </md-button>
-              <md-button class="md-raised md-primary" ng-click="PageTwo()" ng-show="isTemplateDisabled == false"> Generate Graph </md-button>
+              <md-button class="md-raised md-primary" ng-click="PageTwo()"> Build New Configuration </md-button>
+              <md-button class="md-raised md-primary" ng-click="generateGraphFromTemplate(template, $event)"> Generate Graph 
+              <md-tooltip> Choose an existing template to generate graph directly or build a new configuration.
+              </md-tooltip>
+              </md-button>
           </section> 
-
+          <!-- <a id="fileDownloadLink" ng-hide="true" ng-href="downloadUrl" /> -->
       </div>
 
       <!-- End of Page 1 -->
@@ -164,12 +155,13 @@
                         <fieldset class="standard" flex>
                           <legend>Logs</legend>
                           <div layout="row" layout-wrap>
+                            <md-checkbox md-no-ink class="md-primary" ng-model="log_config.global_log" aria-label="Generate Global Logs" >
+                            Generate Global Logs
+                           </md-checkbox>
                            <md-checkbox md-no-ink class="md-primary" ng-model="log_config.device" aria-label="Generate Logs Per Device">
                             Generate Logs Per Device
                            </md-checkbox>
-                           <md-checkbox md-no-ink class="md-primary" ng-model="log_config.global" aria-label="Generate Global Logs" >
-                            Generate Global Logs
-                           </md-checkbox>
+                           
                           </div>
                         </fieldset>
                       </div>
@@ -337,7 +329,7 @@
 
 <script>
 var app = angular.module('myApp', ['ngMaterial','xeditable']);
-app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log, $filter, $http, $q) {
+app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDialog, $log, $filter, $http, $q) {
 
   $scope.isTemplateDisabled = true;
   $scope.global_credentials = true;
@@ -355,6 +347,13 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
 	$scope.pageOneVisible = true;
 	$scope.pageTwoVisible = false;
 	$scope.pageThreeVisible = false;
+  // $scope.format.dot = true;
+  // $scope.format.json = true;
+  // $scope.format.svg = true;
+  // $scope.format.pdf = true;
+  // $scope.format.png = true;
+
+  // $scope.log_config.global_log = true;
 
 	$scope.PageOne = function () {
 		$scope.pageOneVisible = true;
@@ -373,8 +372,6 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
     $scope.configuration = [];
     $scope.output_formats = [];
     $scope.logs = [];
-
-
 
     var request = $http({
                     method: "POST",
@@ -443,24 +440,21 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
     }
 
 
-  $scope.PageFour = function () {
-    $scope.pageOneVisible = false;
-    $scope.pageTwoVisible = false;
-    $scope.pageThreeVisible = false;
-    $scope.pageFourVisible = true;
-
+  $scope.downloadSampleTemplate = function () {
 
     var request = $http({
                     method: "POST",
-                    url: "/pageFour",
-                    data: {
-                        configuration: $scope.configuration
-                    }
+                    url: "/download-sample-template",
                 });
     // Store the data-dump of the FORM scope.
     request.success(
-        function( reponse ) {
-            $scope.resp = response;
+        function( response ) {
+            $scope.downloadUrl = response.data.fileName;
+
+            var fileDownloadLink = document.getElementById("fileDownloadLink");
+            fileDownloadLink.target = "_blank"; // Opens the file in a new window.
+            fileDownloadLink.click();
+            //$scope.resp = response;
             /*
             $scope.svgFile = response;
             
@@ -474,6 +468,82 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
     );
 
     }
+
+
+   $scope.generateGraphFromTemplate =  function (template, ev) {
+      if ($scope.templateUploaded) {
+        $scope.configuration = template;
+        $scope.PageFour();
+      }
+      else {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.body))
+            .title('No template uploaded')
+            .content('You will have to choose a template or build a new configuration to proceed.')
+            .ariaLabel('Template Upload')
+            .ok('OK')
+            .targetEvent(ev)
+        );
+      }
+    }
+
+
+  $scope.PageFour = function () {
+    $scope.pageOneVisible = false;
+    $scope.pageTwoVisible = false;
+    $scope.pageThreeVisible = false;
+    $scope.pageFourVisible = true;
+
+    var fd = new FormData();
+    fd.append("data", JSON.stringify($scope.configuration));
+    var request = new XMLHttpRequest();
+    request.open("POST", "/pageFour");
+    request.send(fd);
+  }
+    // var url = "/pageFour";
+    // $http.post(url, fd, {
+    //     withCredentials : false,
+    //     headers : {
+    //     'Content-Type' : undefined
+    //     }
+    //    })
+    //    .success(function(data)
+    //    {
+    //     console.log(data);
+    //    })
+    //    .error(function(data)
+    //    {
+    //     console.log(data);
+    //    });
+    //   }
+
+
+    // var request = $http({
+    //                 method: "POST",
+    //                 url: "/pageFour",
+    //                 headers : {
+    //                        'Content-Type' : 'application/text'
+    //                 },
+    //                 data: $scope.configuration
+    //             });
+    // // Store the data-dump of the FORM scope.
+    // request.success(
+    //     function( reponse ) {
+    //         $scope.resp = response;
+    //         /*
+    //         $scope.svgFile = response;
+            
+    //         if svg file do ::
+    //         angular.element( document.querySelector( '#svgg' ) ).append($scope.svgFile);
+    //         $scope.$apply ();
+
+    //         for pdf it will be something else.
+    //     */
+    //     }
+    // );
+
+    // }
 
 
   $scope.onTemplateSwitchChange = function(switchValue) {
