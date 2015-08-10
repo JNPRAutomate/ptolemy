@@ -18,8 +18,10 @@ import SimpleHTTPServer
 import SocketServer
 import logging
 import cgi
-
+from pprint import pprint
 import sys
+from os import path
+import json
 
 
 if len(sys.argv) > 2:
@@ -43,6 +45,15 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_POST(self):
         logging.warning("======= POST STARTED =======")
         logging.warning(self.headers)
+        length = int(self.headers.getheader('content-length'))
+        data = self.rfile.read(length)
+        jd = json.loads(data)
+        print jd["Connection Details"][0]["hostname"]
+        # self.send_response(200, "OK")
+
+        print "#####"
+        #self.finish()
+        #self.connection.close()
 
         if self.path == "/pageFour":
             length = int(self.headers.getheader('content-length'))
@@ -53,11 +64,19 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 '''
                 f = open (filename)
                         contents = f.read ()
-                        self.wfile.write (contents) 
+                        self.wfile.write (contents)
                         f.close ()
                 '''
             SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
-        #else if (self: 
+
+        elif self.path == "/download-sample-template":
+            # script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
+            #file_path = path.relpath()
+            # abs_file_path = os.path.join(script_dir, rel_path)
+            f = open ("templates/sample.ptpl","r")
+            contents = f.read ()
+            self.wfile.write (contents) 
+            f.close ()
         else:
             # form = cgi.FieldStorage(
             #     fp=self.rfile,
@@ -70,54 +89,11 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             # for item in form.list:
             #     logging.warning(item)
             # logging.warning("\n")
-            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
 Handler = ServerHandler
 
 httpd = SocketServer.TCPServer(("", PORT), Handler)
 
-print "@rochacbruno Python http server version 0.1 (for testing purposes only)"
 print "Serving at: http://%(interface)s:%(port)s" % dict(interface=I or "localhost", port=PORT)
 httpd.serve_forever()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# import sys
-# import BaseHTTPServer
-# from SimpleHTTPServer import SimpleHTTPRequestHandler
-
-
-# HandlerClass = SimpleHTTPRequestHandler
-# ServerClass  = BaseHTTPServer.HTTPServer
-# Protocol     = "HTTP/1.0"
-
-# if sys.argv[1:]:
-#     port = int(sys.argv[1])
-# else:
-#     port = 8000
-# server_address = ('', port)
-
-# HandlerClass.protocol_version = Protocol
-# httpd = ServerClass(server_address, HandlerClass)
-
-# sa = httpd.socket.getsockname()
-# print "Serving HTTP on", sa[0], "port", sa[1], "..."
-# httpd.serve_forever()

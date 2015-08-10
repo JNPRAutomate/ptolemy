@@ -502,6 +502,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
    $scope.generateGraphFromTemplate =  function (template, ev) {
       if ($scope.templateUploaded) {
         $scope.configuration = template;
+        //$scope.output_formats = [{'format':'svg','name':'SVG'},{'format':'pdf','name':'PDF'}]
         $scope.GenerateGraph();
       }
       else {
@@ -561,11 +562,20 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
       $scope.pageThreeVisible = false;
       $scope.pageFourVisible = true;
 
-      var fd = new FormData();
-      fd.append("data", JSON.stringify($scope.configuration));
-      var request = new XMLHttpRequest();
-      request.open("POST", "/pageFour");
-      request.send(fd);
+      var request = $http({
+                    method: "POST",
+                    url: "/pageFour",
+                        headers : {
+                          'Content-Type' : 'application/json'
+                        },
+                    data: $scope.configuration
+                });
+      // Store the data-dump of the FORM scope.
+      request.success(
+          function( html ) {
+              $scope.cfdump = html;
+          }
+      );
   }
     // var url = "/pageFour";
     // $http.post(url, fd, {
