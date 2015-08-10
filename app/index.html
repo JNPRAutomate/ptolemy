@@ -538,6 +538,8 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 
   $scope.PageFour = function (ev) {
     if($scope.connectionDetailsUploaded || ($scope.connectionDetails && $scope.connectionDetails.length > 0  && $scope.connectionDetails[0]['hostname'])){
+      // Push Connection Details to Configuration
+      $scope.configuration[0]['Connection Details'] = $scope.connectionDetails;
       $scope.GenerateGraph();
     } else {
       $mdDialog.show(
@@ -558,9 +560,6 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
       $scope.pageTwoVisible = false;
       $scope.pageThreeVisible = false;
       $scope.pageFourVisible = true;
-
-      // Push Connection Details to Configuration
-      $scope.configuration[0]['Connection Details'] = $scope.connectionDetails;
 
       var fd = new FormData();
       fd.append("data", JSON.stringify($scope.configuration));
