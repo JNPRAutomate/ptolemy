@@ -62,16 +62,31 @@
                 Develop using Existing Template</md-switch>
                 <span>
                 <label for="file-input" style="margin-left:20px">Browse Template</label>  
-                <input id="file-input" style="margin-left:10px" type="file" ng-disabled="isTemplateDisabled" on-read-file="loadTemplate($fileContent)">
+                <input id="file-input" style="margin-left:10px" type="file" accept=".ptpl" ng-disabled="isTemplateDisabled" on-read-file="loadTemplate($fileContent)">
 
                 <md-button class="md-raised md-primary">Download Sample Template</md-button>
                 </span>
                 <div ng-show="templateUploaded == true">
-                  <a href="#" editable-textarea="template">
+                  <!-- <span editable-textarea="template" ng-show="templateEditable == false"> -->
                   <!-- e-rows="7" e-cols="40" -->
-                    <pre>{{ template || 'no description' }}</pre>
-                  </a>
+                    <pre>{{ template }}</pre>
+                  <!-- </span> -->
+
+                  <!-- buttons -->
+                  <!-- <div class="btn-edit">
+                    <md-button  type="button" class="md-raised md-primary" ng-show="!tableform.$visible" ng-click="tableform.$show()">
+                      edit
+                    </md-button >
+                  </div>
+                  <div class="btn-form" ng-show="tableform.$visible">
+                    <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="addNewConnectionDetail()" class="md-raised md-primary">add device</md-button >
+                    <md-button  type="submit" ng-disabled="tableform.$waiting" class="md-raised md-primary">confirm</md-button >
+                    <md-button  type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="md-raised md-primary">cancel</md-button >
+                  </div>  -->
+
                 </div>
+
+
                 </md-card-content>
           </md-card>
           <section layout="row" layout-sm="column" layout-align="center center">
@@ -183,14 +198,7 @@
                     <md-content layout-padding layout="row" layout-sm="column" > 
                     <!-- ng-show="sshCredentials" -->
                         <label style="margin-bottom:20px">Connection Details</label>
-                        <input type="file" id="connection_details" style="margin-bottom:20px;margin-left:10px" on-read-file="loadConnectionDetails($fileContent)">
-
-                        <!-- File Content -->
-                        <!-- <div ng-if="content">
-                            <h2>File content is:</h2>
-                            <pre>{{ content }}</pre>
-                        </div> -->
-                        <!-- Ends -->
+                        <input type="file" id="connection_details" accept=".csv" style="margin-bottom:20px;margin-left:10px" on-read-file="loadConnectionDetails($fileContent)">
                     </md-content>
 
 
@@ -338,6 +346,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
   $scope.editableTable = false;
   $scope.connectionDetailsUploaded = false;
   $scope.templateUploaded = false;
+  $scope.templateEditable = false;
 
   $scope.configuration = [];
 
