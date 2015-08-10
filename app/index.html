@@ -65,6 +65,7 @@
                 <input id="file-input" style="margin-left:10px" type="file" accept=".ptpl" ng-disabled="isTemplateDisabled" on-read-file="loadTemplate($fileContent)">
 
                 <md-button class="md-raised md-primary" ng-click="downloadSampleTemplate()">Download Sample Template</md-button>
+                <a href="downloadUrl" id="fileDownloadLink" ng-hide="true"></a>
                 </span>
                 <div ng-show="templateUploaded == true">
                   <!-- <span editable-textarea="template" ng-show="templateEditable == false"> -->
@@ -174,7 +175,7 @@
 
         <section layout="row" layout-sm="column" layout-align="center center">
             <md-button class="md-raised md-primary" ng-click="PageOne()" > Back </md-button>
-            <md-button class="md-raised md-primary" ng-click="PageThree()" > Next </md-button>
+            <md-button class="md-raised md-primary" ng-click="PageThree($event)" > Next </md-button>
            <div class="label" style="visibility: hidden">Raised</div>
         </section> 
       </div>
@@ -395,7 +396,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
   //     });
     }
 
-	$scope.PageThree = function () {
+	$scope.PageThree = function (ev) {
 
     //Update the dictionary with configuration details
     $scope.output_formats = [];
@@ -415,29 +416,48 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
       };
     });
 
-    if ($scope.global_credentials) {
-      $scope.user_credentials = {
-        'username' : $scope.global_user.username,
-        'password' : $scope.global_user.password
-      };
-      $scope.configuration.push({
-        'Global Credentials' : $scope.user_credentials,
-        'Output Formats' : $scope.output_formats,
-        'Logs' : $scope.logs
-      });
-    } else {
-      $scope.configuration.push({
-        'Global Credentials' : 'None',
-        'Output Formats' : $scope.output_formats,
-        'Logs' : $scope.logs
-      });
-    };
-    $scope.pageOneVisible = false;
-    $scope.pageTwoVisible = false;
-    $scope.pageThreeVisible = true;
-    $scope.pageFourVisible = false;
+    // Validate if Credentials are entered if gloval credentials is checked
+    if (($scope.global_credentials && !$scope.global_user) || ($scope.global_credentials && (!$scope.global_user.username || !$scope.global_user.password))) {
+      $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.body))
+            .title('Incomplete Credentials')
+            .content('Please enter Username and password or uncheck Global User Credentials to proceed.')
+            .ariaLabel('Template Upload')
+            .ok('OK')
+            .targetEvent(ev)
+        );
+    } else{
 
-    }
+        $scope.pageOneVisible = false;
+        $scope.pageTwoVisible = false;
+        $scope.pageThreeVisible = true;
+        $scope.pageFourVisible = false;
+
+        if ($scope.global_credentials) {
+          $scope.user_credentials = {
+            'username' : $scope.global_user.username,
+            'password' : $scope.global_user.password
+          };
+          $scope.configuration.push({
+            'Global Credentials' : $scope.user_credentials,
+            'Output Formats' : $scope.output_formats,
+            'Logs' : $scope.logs
+          });
+        } else {
+          $scope.configuration.push({
+            'Global Credentials' : 'None',
+            'Output Formats' : $scope.output_formats,
+            'Logs' : $scope.logs
+          });
+        };
+        
+    };
+
+
+
+  }
+
 
 
   $scope.downloadSampleTemplate = function () {
