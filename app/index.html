@@ -60,10 +60,18 @@
                 <h2 class="md-title">Configuration</h2>
                 <md-switch class="md-primary" md-no-ink ng-model="templateSwitch" ng-change="onTemplateSwitchChange(templateSwitch)">
                 Develop using Existing Template</md-switch>
+                <span>
                 <label for="file-input" style="margin-left:20px">Browse Template</label>  
-                <input id="file-input" style="margin-left:10px" type="file" ng-disabled="isTemplateDisabled">
+                <input id="file-input" style="margin-left:10px" type="file" ng-disabled="isTemplateDisabled" on-read-file="loadTemplate($fileContent)">
 
                 <md-button class="md-raised md-primary">Download Sample Template</md-button>
+                </span>
+                <div ng-show="templateUploaded == true">
+                  <a href="#" editable-textarea="template">
+                  <!-- e-rows="7" e-cols="40" -->
+                    <pre>{{ template || 'no description' }}</pre>
+                  </a>
+                </div>
                 </md-card-content>
           </md-card>
           <section layout="row" layout-sm="column" layout-align="center center">
@@ -329,6 +337,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
 
   $scope.editableTable = false;
   $scope.connectionDetailsUploaded = false;
+  $scope.templateUploaded = false;
 
   $scope.configuration = [];
 
@@ -462,10 +471,8 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
     $scope.isTemplateDisabled = !switchValue
   }
 
-
-
   $scope.loadConnectionDetails = function($fileContent){
-    //Parse the file content and put it into connection details
+    //Parse the file content and put it into template details
     $scope.connectionDetails = [];
     $scope.fileArray = $fileContent.split("\n");
     // Ignore Line 1 since it will always contain the Headers
@@ -483,7 +490,12 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log,
       };
     }
     $scope.connectionDetailsUploaded = true;
-    $scope.content = $fileContent;
+  };
+
+  $scope.loadTemplate = function($fileContent){
+    //Parse the file content and put it into connection details
+    $scope.template = $fileContent;
+    $scope.templateUploaded = true;
   };
 
   // $scope.showContent = function($fileContent){
