@@ -462,9 +462,6 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
         };
         
     };
-
-
-
   }
 
 
@@ -501,7 +498,13 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 
    $scope.generateGraphFromTemplate =  function (template, ev) {
       if ($scope.templateUploaded) {
-        $scope.configuration = template;
+        $scope.configuration = JSON.parse(template);
+        // Fetch the Output Formats from the JSON Dictionary
+        formats = $scope.configuration["Output Formats"];
+        $scope.output_formats = [];
+        for (index=0;index < formats.length; index++){
+          $scope.output_formats.push({"format":formats[index].toLowerCase(),"name":formats[index].toUpperCase()});
+        }
         //$scope.output_formats = [{'format':'svg','name':'SVG'},{'format':'pdf','name':'PDF'}]
         $scope.GenerateGraph();
       }
@@ -565,7 +568,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
       var request = $http({
                     method: "POST",
                     url: "/pageFour",
-                        headers : {
+                    headers : {
                           'Content-Type' : 'application/json'
                         },
                     data: $scope.configuration
