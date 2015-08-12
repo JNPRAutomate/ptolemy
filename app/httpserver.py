@@ -59,13 +59,11 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             return
 
         elif self.path == "/download-sample-template":
-            # script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
-            #file_path = path.relpath()
-            # abs_file_path = os.path.join(script_dir, rel_path)
             f = open ("templates/sample.ptpl","r")
             contents = f.read ()
             self.wfile.write (contents) 
             f.close ()
+            return
         else:
             logging.warning("======= POST VALUES =======")
         SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)

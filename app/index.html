@@ -77,7 +77,6 @@
                 <input id="file-input" style="margin-left:10px" type="file" accept=".ptpl" ng-disabled="isTemplateDisabled" on-read-file="loadTemplate($fileContent)">
 
                 <md-button class="md-raised md-primary" ng-click="downloadSampleTemplate()">Download Sample Template</md-button>
-                <a href="downloadUrl" id="fileDownloadLink" ng-hide="true"></a>
                 </span>
                 <div ng-show="templateUploaded == true">
                   <h3>Template</h3>
@@ -455,21 +454,12 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     // Store the data-dump of the FORM scope.
     request.success(
         function( response ) {
-            $scope.downloadUrl = response.data.fileName;
+              var hiddenElement = document.createElement('a');
 
-            var fileDownloadLink = document.getElementById("fileDownloadLink");
-            fileDownloadLink.target = "_blank"; // Opens the file in a new window.
-            fileDownloadLink.click();
-            //$scope.resp = response;
-            /*
-            $scope.svgFile = response;
-            
-            if svg file do ::
-            angular.element( document.querySelector( '#svgg' ) ).append($scope.svgFile);
-            $scope.$apply ();
-
-            for pdf it will be something else.
-        */
+              hiddenElement.href = 'data:attachment/json;charset=utf8,'+ encodeURI(JSON.stringify(response,null, "\t"));
+              hiddenElement.target = '_blank';
+              hiddenElement.download = 'sample.ptpl';
+              hiddenElement.click();
         }
     );
 
