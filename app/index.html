@@ -582,13 +582,24 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
                         },
                     data: $scope.configuration
                 }).then(function( response ) {
-                           $scope.loading = false;
+                            $scope.loading = false;
                             $scope.svgFile = response.data;
+                            // Fix the height and width of the SVG Content
+                            var parser = new DOMParser();
+                            // Fetch the document
+                            var doc = parser.parseFromString($scope.svgFile,"text/xml");
+                            // Get all SVG node tags
+                            var svg = doc.getElementsByTagName("svg");
+                            // Get first element and we are sure that there will be only one element
+                            if (svg.length > 0 ) {
+                              svg[0].setAttribute("width","100%");
+                              svg[0].setAttribute("height","100%");
+                            };
                             // First clear any other graphs generated previously
                             angular.element( document.querySelector( '#content_view' ) ).empty();
                             // Append the newly generated content
-                            angular.element( document.querySelector( '#content_view' ) ).append($scope.svgFile);
-                            // $scope.$apply ();
+                            // $scope.svgFile = doc;
+                            angular.element( document.querySelector( '#content_view' ) ).append(svg[0]);
                     });
   }
 
