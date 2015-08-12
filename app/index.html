@@ -169,7 +169,7 @@
                         <fieldset class="standard" flex>
                           <legend>Logs</legend>
                           <div layout="row" layout-wrap>
-                            <md-radio-group ng-model="log_config">
+                            <md-radio-group ng-model="log_config" class="md-primary">
                               <md-radio-button value="global_log" class="md-primary">Generate Global Logs</md-radio-button>
                               <md-radio-button value="device"> Generate Logs Per Device </md-radio-button>
                             </md-radio-group>
@@ -227,19 +227,19 @@
             			      <tr ng-repeat="device in connectionDetails | filter : filterConnections">
             			        <td>
             			          <!-- editable username (text with validation) -->
-            			          <span editable-text="device.hostname" e-form="tableform" ng-show="editableTable == false" onbeforesave="checkHostName($data, device.hostname)">
+            			          <span editable-text="device.hostname" e-form="tableform" ng-show="editableTable == false" onbeforesave="checkHostName($data)">
             			            {{ device.hostname }}
             			          </span>
             			        </td>
             			        <td>
             			          <!-- editable status (select-local) -->
-            			          <span editable-text="device.username" e-form="tableform" ng-show="editableTable == false" onbeforesave="checkUserName($data, device.username)">
+            			          <span editable-text="device.username" e-form="tableform" ng-show="editableTable == false" onbeforesave="checkUserName($data)">
             			            {{ device.username }}
             			          </span>
             			        </td>
             			        <td>
             			          <!-- editable group (select-remote) -->
-            			          <span editable-password="device.password" e-form="tableform" ng-show="editableTable == false" onbeforesave="checkPassword($data, device.password)">
+            			          <span editable-password="device.password" e-form="tableform" ng-show="editableTable == false" onbeforesave="checkPassword($data)">
             			            <input type="password" name="lname" disabled value="{{ device.password }}">
             			          </span>
             			        </td>
@@ -371,6 +371,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 	$scope.pageTwoVisible = false;
 	$scope.pageThreeVisible = false;
   $scope.sidebar = true;
+  $scope.log_config = "global_log";
   // $scope.format.dot = true;
   // $scope.format.json = true;
   // $scope.format.svg = true;
@@ -547,19 +548,19 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     }
 
 
-  $scope.checkHostName = function(data, hostname) {
+  $scope.checkHostName = function(hostname) {
     if (!hostname) {
       return "Please enter a valid hostname.";
     }
   };
 
-  $scope.checkUserName = function(data, username) {
+  $scope.checkUserName = function(username) {
     if (!$scope.global_credentials && !username) {
       return "Please enter a valid username.";
     }
   };
 
-  $scope.checkPassword = function(data, password) {
+  $scope.checkPassword = function(password) {
     if (!$scope.global_credentials && !password) {
       return "Please enter a valid password.";
     }
