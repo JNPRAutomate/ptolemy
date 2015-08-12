@@ -266,7 +266,7 @@
                   </md-select>
                   <md-button class="md-raised md-primary" ng-click="" > Download </md-button>
                   <md-button class="md-raised md-primary" ng-click="" > Download All Formats </md-button>
-                  <md-button class="md-raised md-primary" ng-click="" > Save Configuration as Template </md-button>
+                  <md-button class="md-raised md-primary" ng-click="downloadConfigurationAsTemplate()" > Save Configuration as Template </md-button>
                   </span>
 
                   <!-- View to Indicate that work is in progress -->
@@ -381,26 +381,6 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     $scope.configuration = [];
     $scope.logs = [];
 
-    var request = $http({
-                    method: "POST",
-                    url: "/ptolemy",
-                    data: $scope.configuration
-                });
-    // Store the data-dump of the FORM scope.
-    request.success(
-        function( html ) {
-            $scope.cfdump = html;
-        }
-    );
-
-      
-		// $http.post("/asd.svg", {file1:$scope.tracediffFile1, file2:$scope.tracediffFile2})
-  //     .success(function (response) {
-  //       $scope.svgFile = response;
-
-  //       angular.element( document.querySelector( '#svgg' ) ).append($scope.svgFile);
-		// $scope.$apply ();
-  //     });
     }
 
 	$scope.PageThree = function (ev) {
@@ -454,6 +434,16 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     };
   }
 
+  $scope.downloadConfigurationAsTemplate = function () {
+
+    var hiddenElement = document.createElement('a');
+
+    hiddenElement.href = 'data:attachment/json;charset=utf8,'+ encodeURI(JSON.stringify($scope.configuration,null, "\t"));
+    hiddenElement.target = '_blank';
+    hiddenElement.download = 'template.ptpl';
+    hiddenElement.click();
+
+  }
 
 
   $scope.downloadSampleTemplate = function () {
