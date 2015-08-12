@@ -53,7 +53,7 @@
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="sidebar == true">
       <md-content layout-padding layout="column">
         <img ng-src="img/icons/logo.png" alt="Ptolemy - The Network Cartographer" style="padding-left:40px" layout-align="center center">
-        <img ng-src="img/icons/glyphicons_collapse.png" alt="Hide" style="padding-left:40px" layout-align="center center">
+        <!-- <img ng-src="img/icons/glyphicons_collapse.png" alt="Hide" style="padding-left:40px" layout-align="center center"> -->
       </md-content>
       <md-button class="md-primary" layout-align="bottom right" ng-click="hideSideNav()" ng-show="sidebar == true"> Hide </md-button>
     </md-sidenav>
@@ -136,30 +136,33 @@
                         <fieldset class="standard" flex>
                           <legend>Output Formats</legend>
                           <div layout="row" layout-wrap>
-                           <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format.dot" aria-label="DOT" flex="50" ng-value="DOT">
-                            DOT
-                           </md-checkbox>
-                           </div>
-                            <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format.json" aria-label="JSON" flex="50" ng-value="JSON">
-                              JSON
-                           </md-checkbox>
-                           </div>
-                            <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format.svg" aria-label="SVG" flex="50" ng-value="SVG">
-                              SVG
-                           </md-checkbox>
-                           </div>
-                            <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format.pdf" aria-label="PDF" flex="50" ng-value="PDF">
-                              PDF
-                           </md-checkbox>
-                           </div>
-                            <div class="standard" flex="50">
-                           <md-checkbox md-no-ink class="md-primary" ng-model="format.png" aria-label="PNG" flex="50" ng-value="PNG">
-                              PNG
-                           </md-checkbox>
+                           <div flex="50" ng-repeat="item in output_formats">
+                             <md-checkbox md-no-ink class="md-primary" flex="50" ng-checked="format_exists(item, selected_output_formats)" ng-click="toggle_output_formats(item, selected_output_formats)" aria-label="item">
+                                {{ item }}
+                            </md-checkbox>
+                             <!-- <md-checkbox md-no-ink class="md-primary" ng-checked="format.dot == true" ng-model="format.dot" aria-label="DOT" flex="50" ng-value="DOT">
+                              DOT
+                             </md-checkbox>
+                             </div>
+                              <div class="standard" flex="50">
+                             <md-checkbox md-no-ink class="md-primary" ng-checked="format.json == true" ng-model="format.json" aria-label="JSON" flex="50" ng-value="JSON">
+                                JSON
+                             </md-checkbox>
+                             </div>
+                              <div class="standard" flex="50">
+                             <md-checkbox md-no-ink class="md-primary" ng-checked="format.svg == true" ng-model="format.svg" aria-label="SVG" flex="50" ng-value="SVG">
+                                SVG
+                             </md-checkbox>
+                             </div>
+                              <div class="standard" flex="50">
+                             <md-checkbox md-no-ink class="md-primary" ng-checked="format.pdf == true" ng-model="format.pdf" aria-label="PDF" flex="50" ng-value="PDF">
+                                PDF
+                             </md-checkbox>
+                             </div>
+                              <div class="standard" flex="50">
+                             <md-checkbox md-no-ink class="md-primary" ng-checked="format.png == true" ng-model="format.png" aria-label="PNG" flex="50" ng-value="PNG">
+                                PNG
+                             </md-checkbox> -->
                            </div>
                           </div>
                         </fieldset>
@@ -289,7 +292,7 @@
                   <span>
                   <label>View As</label>
                   <md-select placeholder="Content Type" ng-model="view_format">
-                    <md-option ng-repeat="view_format in output_formats" value="{{view_format}}">{{view_format.name}}</md-option>
+                    <md-option ng-repeat="view_format in selected_output_formats" value="{{view_format}}">{{view_format}}</md-option>
                   </md-select>
                   <md-button class="md-raised md-primary" ng-click="" > Download </md-button>
                   <md-button class="md-raised md-primary" ng-click="" > Download All Formats </md-button>
@@ -372,6 +375,20 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 	$scope.pageThreeVisible = false;
   $scope.sidebar = true;
   $scope.log_config = "global_log";
+  $scope.output_formats = ["DOT","JSON","SVG","PDF","PNG"];
+  $scope.selected_output_formats = ["DOT","JSON","SVG","PDF","PNG"];
+
+
+  $scope.toggle_output_formats = function (item, list) {
+        var idx = list.indexOf(item);
+        if (idx > -1) list.splice(idx, 1);
+        else list.push(item);
+  };
+
+  $scope.format_exists = function (item, list) {
+        return list.indexOf(item) > -1;
+  };
+
   // $scope.format.dot = true;
   // $scope.format.json = true;
   // $scope.format.svg = true;
@@ -400,7 +417,6 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 
     // Clear all the configuration since it will be updated on press of next
     $scope.configuration = [];
-    $scope.output_formats = [];
     $scope.logs = [];
 
     var request = $http({
@@ -428,15 +444,15 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 	$scope.PageThree = function (ev) {
 
     //Update the dictionary with configuration details
-    $scope.output_formats = [];
+    // $scope.output_formats = [];
     $scope.logs = [];
 
     // If Output format is checked, add it to supported formats
-    angular.forEach($scope.format, function(value, key) {
-      if (value) {
-        $scope.output_formats.push({'format':key,'name':key.toUpperCase()});
-      };
-    });
+    // angular.forEach($scope.format, function(value, key) {
+    //   if (value) {
+    //     $scope.output_formats.push({'format':key,'name':key.toUpperCase()});
+    //   };
+    // });
 
     // If any log type is checked, add it to configuration
     // angular.forEach($scope.log_config, function(value, key) {
@@ -474,14 +490,14 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
           };
           $scope.configuration.push({
             "Global Credentials" : $scope.user_credentials,
-            "Output Formats" : $scope.output_formats,
+            "Output Formats" : $scope.selected_output_formats,
             "Logs" : $scope.logs,
             "Connection Details": ""
           });
         } else {
           $scope.configuration.push({
             "Global Credentials" : 'None',
-            "Output Formats" : $scope.output_formats,
+            "Output Formats" : $scope.selected_output_formats,
             "Logs" : $scope.logs,
             "Connection Details": ''
           });
@@ -527,9 +543,9 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
         $scope.configuration = JSON.parse(template);
         // Fetch the Output Formats from the JSON Dictionary
         formats = $scope.configuration["Output Formats"];
-        $scope.output_formats = [];
+        $scope.selected_output_formats = [];
         for (index=0;index < formats.length; index++){
-          $scope.output_formats.push({"format":formats[index].toLowerCase(),"name":formats[index].toUpperCase()});
+          $scope.selected_output_formats.push(formats[index].toUpperCase());
         }
         //$scope.output_formats = [{'format':'svg','name':'SVG'},{'format':'pdf','name':'PDF'}]
         $scope.GenerateGraph();
