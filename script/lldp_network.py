@@ -282,33 +282,28 @@ class L1NetworkFlow():
 	def write_graph(self, graph):
 		# Write the graph to a dot file
 		graph_file_name = self.get_generated_filename("graph_","dot")
-		graph.write(graph_file_name) # write to simple.dot
-		# filename["dot"] = graph_file_name;
+		graph.write(graph_file_name)
 		self.logger.info( '' )
 		self.logger.info( "Wrote graph to "+graph_file_name )
 			
 		#neato, dot, twopi, circo, fdp, nop, wc, acyclic, gvpr, gvcolor, ccomps, sccmap, tred, sfdp.
 		# Write the graph to a SVG file
 		graph_file_name = self.get_generated_filename("graph_","svg")
-		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
-		# filename["svg"] = graph_file_name;
+		graph.draw(graph_file_name,prog='dot') 
 		self.logger.info( '' )
 		self.logger.info( "Wrote graph to DOT SVG file "+graph_file_name )
 
-		# Write the graph to a SVG file
+		# Write the graph to a PDF file
 		graph_file_name = self.get_generated_filename("graph_","pdf")
-		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
-		# filename["pdf"] = graph_file_name;
+		graph.draw(graph_file_name,prog='dot') 
 		self.logger.info( '' )
 		self.logger.info( "Wrote graph to PDF SVG file "+graph_file_name )
 
-		# Write the graph to a SVG file
+		# Write the graph to a PNG file
 		graph_file_name = self.get_generated_filename("graph_","png")
-		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
-		# filename["png"] = graph_file_name;
+		graph.draw(graph_file_name,prog='dot')
 		self.logger.info( '' )
 		self.logger.info( "Wrote graph to PDF SVG file "+graph_file_name )
-		# # return filename
 		
 
 

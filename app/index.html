@@ -467,18 +467,19 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
                           'Content-Type' : 'application/json'
                         },
                     data: $scope.configuration
-                  });
+                  }).then(function( response ) {
+                          var hiddenElement = document.createElement('a');
+                          content_type = response.headers("Content-Type");
+                          if (content_type == "application/json") {
+                            hiddenElement.href = 'data:attachment/'+content_type+','+ encodeURI(JSON.stringify(response.data,null, "\t"));
+                          } else {
+                            hiddenElement.href = 'data:attachment/'+content_type+','+ encodeURI(response.data);
+                          }
+                          hiddenElement.target = '_blank';
+                          hiddenElement.download = 'output.'+ $scope.view_format.toLowerCase();
+                          hiddenElement.click();
+                    });
       // Store the data-dump of the FORM scope.
-      request.success(
-          function( response ) {
-                var hiddenElement = document.createElement('a');
-
-                hiddenElement.href = 'data:attachment/image/svg+xml'+ encodeURI(response);
-                hiddenElement.target = '_blank';
-                hiddenElement.download = 'output.'+ $scope.view_format.toLowerCase();
-                hiddenElement.click();
-          }
-      );
 
     }
 
