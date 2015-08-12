@@ -23,7 +23,7 @@ import sys
 from os import path
 import json
 
-
+sys.path.append("../script")
 if len(sys.argv) > 2:
     PORT = int(sys.argv[2])
     I = sys.argv[1]
@@ -33,7 +33,6 @@ elif len(sys.argv) > 1:
 else:
     PORT = 8000
     I = ""
-
 
 class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
@@ -45,29 +44,19 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_POST(self):
         logging.warning("======= POST STARTED =======")
         logging.warning(self.headers)
-        length = int(self.headers.getheader('content-length'))
-        data = self.rfile.read(length)
-        jd = json.loads(data)
-        print jd["Connection Details"][0]["hostname"]
-        # self.send_response(200, "OK")
-
-        print "#####"
-        #self.finish()
-        #self.connection.close()
 
         if self.path == "/pageFour":
             length = int(self.headers.getheader('content-length'))
-            postvars = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
-            print postvars.get ("configuration", "asd")
-            for key in postvars:
-                print key
-                '''
-                f = open (filename)
-                        contents = f.read ()
-                        self.wfile.write (contents)
-                        f.close ()
-                '''
-            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+            data = self.rfile.read(length)
+            configuration_details = json.loads(data)
+            print configuration_details["Connection Details"][0]["hostname"]
+            from ptolemy import get_network_flow
+            filename = get_network_flow(configuration_details)
+            f = open (filename["svg"],"r")
+            contents = f.read ()
+            self.wfile.write (contents) 
+            f.close ()
+            return
 
         elif self.path == "/download-sample-template":
             # script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
@@ -78,17 +67,7 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.wfile.write (contents) 
             f.close ()
         else:
-            # form = cgi.FieldStorage(
-            #     fp=self.rfile,
-            #     headers=self.headers,
-            #     environ={'REQUEST_METHOD':'POST',
-            #              'CONTENT_TYPE':self.headers['Content-Type'],
-            #              }
-            #              )
             logging.warning("======= POST VALUES =======")
-            # for item in form.list:
-            #     logging.warning(item)
-            # logging.warning("\n")
         SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
 Handler = ServerHandler
