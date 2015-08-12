@@ -50,14 +50,14 @@
 <body>
 <div ng-controller="AppCtrl" layout="column">
   <section layout="row" flex>
-    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="sidebar == true">
-      <md-content layout-padding layout="column">
-        <img ng-src="img/icons/logo.png" alt="Ptolemy - The Network Cartographer" style="padding-left:40px" layout-align="center center">
-        <!-- <img ng-src="img/icons/glyphicons_collapse.png" alt="Hide" style="padding-left:40px" layout-align="center center"> -->
-      </md-content>
-      <md-button class="md-primary" layout-align="bottom right" ng-click="hideSideNav()" ng-show="sidebar == true"> Hide </md-button>
-    </md-sidenav>
-    <md-button class="md-primary" layout-align="bottom right" ng-click="hideSideNav()" ng-show="sidebar == false"> Hide </md-button>
+    <div layout="row">
+      <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="sidebar == true">
+        <md-content layout-padding layout="row">
+          <img ng-src="img/icons/logo.png" alt="Ptolemy - The Network Cartographer" style="padding-left:40px" layout-align="center center">
+        </md-content>
+      </md-sidenav>
+      <img ng-src="{{collapse_expand_image}}" alt="Hide" height="19" width="19" style="margin-top:10px" ng-click="toggleSideNav()" title="Toggle Side Navigator">
+    </div>
     <md-content flex layout-padding>
 
     	<md-toolbar class="md-theme-indigo">
@@ -97,7 +97,6 @@
               </md-tooltip>
               </md-button>
           </section> 
-          <!-- <a id="fileDownloadLink" ng-hide="true" ng-href="downloadUrl" /> -->
       </div>
 
       <!-- End of Page 1 -->
@@ -256,27 +255,27 @@
       <div layout="column" layout-fill layout-align="top center" ng-show="pageFourVisible">
        <md-card>
               <md-card-content>
-                <div>
+                <!-- View to Indicate that work is in progress -->
+                <div id="loading_div" ng-show="loading == true">
+                    <h4>This might take a while. Please wait...</h4>
+                    <div layout="row" layout-sm="column" layout-align="space-around">
+                      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                    </div>
+                </div>
+                <div ng-show="loading == false">
                   <h1 class="md-title">Network Topology</h1>
                   <span>
                   <label>View As</label>
                   <md-select placeholder="Content Type" ng-model="view_format">
                     <md-option ng-repeat="view_format in selected_output_formats" value="{{view_format}}">{{view_format}}</md-option>
                   </md-select>
-                  <md-button class="md-raised md-primary" ng-click="" > Download </md-button>
-                  <md-button class="md-raised md-primary" ng-click="" > Download All Formats </md-button>
+                  <md-button class="md-raised md-primary" ng-click="downloadOutput()" > Download </md-button>
+                  <md-button class="md-raised md-primary" ng-click="downloadOutputAllFormats()" > Download All Formats </md-button>
                   <md-button class="md-raised md-primary" ng-click="downloadConfigurationAsTemplate()" > Save Configuration as Template </md-button>
                   </span>
 
-                  <!-- View to Indicate that work is in progress -->
-                  <div id="loading_div" ng-show="loading == true">
-                      <h4>This might take a while. Please wait...</h4>
-                      <div layout="row" layout-sm="column" layout-align="space-around">
-                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-                      </div>
-                  </div>
                   <!-- View to Show the results -->
-                  <div id='content_view' ng-show="loading == false" style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
+                  <div id='content_view' style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
                   </div>
                 </div>
               </md-card-content>
@@ -295,27 +294,6 @@
      <div flex></div>
 
     </md-content>
-
-
-    <!-- Right Side Navigator -->
-    <!-- <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-      <md-toolbar class="md-theme-light">
-        <h1 class="md-toolbar-tools">Sidenav Right</h1>
-      </md-toolbar>
-      <md-content layout-padding>
-        <form>
-          <md-input-container>
-            <label for="testInput">Test input</label>
-            <input type="text" id="testInput"
-                   ng-model="data" md-sidenav-focus>
-          </md-input-container>
-        </form>
-        <md-button ng-click="close()" class="md-primary">
-          Close Sidenav Right
-        </md-button>
-      </md-content>
-    </md-sidenav> -->
-    <!-- End of Right side navigator -->
 
   </section>
 </div>
@@ -346,7 +324,8 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
   $scope.log_config = "global_log";
   $scope.output_formats = ["DOT","JSON","SVG","PDF","PNG"];
   $scope.selected_output_formats = ["DOT","JSON","SVG","PDF","PNG"];
-
+  $scope.view_format = "SVG";
+  $scope.collapse_expand_image = "img/icons/glyphicons_collapse.png";
 
   $scope.toggle_output_formats = function (item, list) {
         var idx = list.indexOf(item);
@@ -358,9 +337,16 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
         return list.indexOf(item) > -1;
   };
 
-  $scope.hideSideNav = function () {
-   $mdSidenav('left').close();
-   $scope.sidebar = !$scope.sidebar;
+  $scope.toggleSideNav = function () {
+     // $mdSidenav('left').close();
+     $scope.sidebar = !$scope.sidebar;
+     if ($scope.sidebar) {
+        $scope.collapse_expand_image = "img/icons/glyphicons_collapse.png";
+        $scope.collapse_expand_text = "Collapse Side Navigator";
+     } else {
+        $scope.collapse_expand_image = "img/icons/glyphicons_expand.png";
+        $scope.collapse_expand_text = "Expand Side Navigator";
+    }
   }
 
 	$scope.PageOne = function () {
@@ -462,6 +448,27 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
               hiddenElement.click();
         }
     );
+
+    }
+
+
+    $scope.downloadOutput = function () {
+      postUrl = "/download-"+ $scope.view_format.toLowerCase();
+      var request = $http({
+                      method: "POST",
+                      url: postUrl,
+                  });
+      // Store the data-dump of the FORM scope.
+      request.success(
+          function( response ) {
+                var hiddenElement = document.createElement('a');
+
+                hiddenElement.href = 'data:attachment'+ encodeURI(response);
+                hiddenElement.target = '_blank';
+                hiddenElement.download = 'output.'+ $scope.view_format.toLowerCase();
+                hiddenElement.click();
+          }
+      );
 
     }
 
