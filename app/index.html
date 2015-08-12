@@ -272,6 +272,9 @@
                   <md-button class="md-raised md-primary" ng-click="downloadOutput()" > Download </md-button>
                   <md-button class="md-raised md-primary" ng-click="downloadOutputAllFormats()" > Download All Formats </md-button>
                   <md-button class="md-raised md-primary" ng-click="downloadConfigurationAsTemplate()" > Save Configuration as Template </md-button>
+                  <md-button class="md-primary md-raised" ng-click="viewLogGlobal($event)" flex flex-md="100">
+                    View Logs
+                  </md-button>
                   </span>
 
                   <!-- View to Show the results -->
@@ -474,6 +477,32 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
                 hiddenElement.target = '_blank';
                 hiddenElement.download = 'output.'+ $scope.view_format.toLowerCase();
                 hiddenElement.click();
+          }
+      );
+
+    }
+
+
+    $scope.viewLogGlobal = function (ev) {
+      postUrl = "/view-log";
+      var request = $http({
+                      method: "POST",
+                      url: postUrl,
+                      headers : {
+                          'Content-Type' : 'application/json'
+                        },
+                    data: $scope.configuration
+                  });
+      // Store the data-dump of the FORM scope.
+      request.success(
+          function( response ) {
+                $mdDialog.show({
+                  controller: DialogController,
+                  templateUrl: 'log_dialog.html',
+                  targetEvent: ev,
+                  clickOutsideToClose:true,
+                  locals: { global_log_text: response }
+                });
           }
       );
 
@@ -710,6 +739,19 @@ app.directive('onReadFile', function ($parse) {
     }
   };
 });
+
+
+function DialogController($scope, $mdDialog, global_log_text) {
+
+  $scope.global_log_text = global_log_text;
+
+  $scope.hide = function() {
+    $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    $mdDialog.cancel();
+  };
+}
 
 </script>
 </body>

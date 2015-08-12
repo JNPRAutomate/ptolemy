@@ -51,7 +51,6 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         data = self.rfile.read(length)
         configuration_details = json.loads(data)
         filename = configuration_details["Filename"]
-        print filename
 
         if self.path == "/pageFour":
             from ptolemy import get_network_flow
@@ -105,6 +104,13 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             f.close ()
             return
         elif self.path == "/download-all":
+            f = open (filename,"r")
+            contents = f.read ()
+            self.wfile.write (contents) 
+            f.close ()
+            return
+        elif self.path == "/view-log":
+            filename = self.get_file_name(filename,"log")
             f = open (filename,"r")
             contents = f.read ()
             self.wfile.write (contents) 

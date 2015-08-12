@@ -64,9 +64,7 @@ def get_network_flow(configuration_details):
 			device_data["data"].append(device)
 	else:
 		global_username = global_credentials["username"]
-		print "Username :" + global_username
 		global_password = global_credentials["password"]
-		print "Password :" + global_password
 		connection_details = configuration_details["Connection Details"]
 		for connection in connection_details:
 			device = {}

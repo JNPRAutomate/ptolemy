@@ -11,6 +11,7 @@ from pprint import pprint
 import xml.etree.cElementTree as ET
 import socket
 from jnpr.junos.exception import RpcError
+import logging
 
 class L1NetworkFlow():
 
@@ -32,23 +33,34 @@ class L1NetworkFlow():
 		global_password = None
 		global_ssh= None
 
+		# Logger Setup
+		self.logger = logging.getLogger('Ptolemy')
+		logFileName = self.get_generated_filename("","log")
+		hdlr = logging.FileHandler(logFileName)
+		formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+		hdlr.setFormatter(formatter)
+		self.logger.addHandler(hdlr) 
+		self.logger.setLevel(logging.DEBUG)
+		self.logger.info("Welcome to Ptolemy - The Network Cartographer")
+
 		for connection in device_data:
-			print "------------------------------------------------------------------------"
-			print ''
+			self.logger.info("------------------------------------------------------------------------")
+			self.logger.info("")
 
 			dev = None
 			if connection["Password"] == "!!PROMPT!!":
 				connection["Password"] = self.get_password(connection["Hostname"],connection["Username"])
 
 			# Connect to the device
-			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Connecting to "+connection["Hostname"]
+			self.logger.info("Connecting to %s",connection["Hostname"])
+
 			if connection["SSH Key Path"]:
 				dev = self.get_device(connection["Username"], connection["Password"],connection["Hostname"], connection["SSH Key Path"], connection["Port"] )
 			else:
 				dev = self.get_device_nossh(connection["Username"], connection["Hostname"], connection["Port"], connection["Password"] )
 
-			
-			print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+"] Waiting for connections to establish..."
+		
+			self.logger.info("Waiting for connections to establish...");
 
 			host = connection["Hostname"]
 			try:
@@ -56,21 +68,21 @@ class L1NetworkFlow():
 				host = dev.facts["hostname"]
 				self.live_nodes.add(host)
 				# Temporary and won't work in actual scenario. Find a way to work with MAC Addresses or something that is unique in actual campus network for devices
-				print "INFO["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connected"
+				self.logger.info("Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connected")
 			except:
-				print(traceback.format_exc())
-				print "ERROR["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connection failed"
+				self.logger.error(traceback.format_exc)
+				self.logger.error("Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connection failed")
 				continue
 				
-			print "Source System Name : "+ host
+			self.logger.info( "Source System Name : "+ host )
 
-			print "LLDP Neighbours for host : "+ connection["Hostname"]+" port : "+connection["Port"]
+			self.logger.info( "LLDP Neighbours for host : "+ connection["Hostname"]+" port : "+connection["Port"] )
 			
 			neighbour_dict = self.get_lldp_neighbors(dev)
 
 			# Store the values in the dictionary
 			self.lldp_neighbours_dict[host] = neighbour_dict
-			print "LLDP neighbors retrieved for host "+connection["Hostname"]
+			self.logger.info( "LLDP neighbors retrieved for host "+connection["Hostname"] )
 			dev.close()
 		
 
@@ -82,20 +94,20 @@ class L1NetworkFlow():
 		# return filename
 
 	def get_password(self,hostname,username):
-		print 'Enter password associated with Hostname: '+hostname+' and Username: '+username 
+		self.logger.info( 'Enter password associated with Hostname: '+hostname+' and Username: '+username )
 		password = getpass.getpass()
 		if not password:
-			print "Password can't be empty. Please re-enter you password."
+			self.logger.info( "Password can't be empty. Please re-enter you password." )
 			return self.get_password(self,hostname,username)
 
 		return password
 
 	def get_global_password(self):
 		username =  raw_input('Enter global username to be used:  ')
-		print 'Enter global password for Username: '+ username 
+		self.logger.info( 'Enter global password for Username: '+ username )
 		password = getpass.getpass()
 		while not password:
-			print "Password can't be empty. Please re-enter your password."
+			self.logger.info( "Password can't be empty. Please re-enter your password." )
 			password = getpass.getpass()
 
 		return username, password
@@ -104,7 +116,7 @@ class L1NetworkFlow():
 		username = raw_input('Enter global username to be used:  ')
 		ssh_path = raw_input('Enter global SSH File Path for Username: '+ username )
 		while not ssh_path:
-			print "SSH File path can't be empty. Please re-enter the path."
+			self.logger.info( "SSH File path can't be empty. Please re-enter the path." )
 			ssh_path = raw_input('Enter global SSH File Path for Username: '+ username )
 
 		return username, ssh_path
@@ -115,9 +127,9 @@ class L1NetworkFlow():
 		if not portNumber:
 			dev = Device( user=username, host=hostname, password=password )
 		else:
-			print "Connect to Port : "+portNumber
+			self.logger.info( "Connect to Port : "+portNumber )
 			dev = Device( user=username, host=hostname, password=password, port=portNumber )
-		print "Username : "+ username
+		self.logger.info( "Username : "+ username )
 		return dev
 
 	def get_device(self,username,hostname,password,ssh_private_key_file_path,portNumber):
@@ -125,7 +137,7 @@ class L1NetworkFlow():
 			dev = Device( user=username, host=hostname, ssh_private_key_file=ssh_private_key_file_path)
 		else:
 			dev = Device( user=username, host=hostname, ssh_private_key_file=ssh_private_key_file_path, port=portNumber )
-		print "Username : "+ username
+		self.logger.info( "Username : "+ username )
 		return dev
 
 	def get_lldp_neighbors(self,dev):
@@ -158,14 +170,14 @@ class L1NetworkFlow():
 				try:
 					# print the values on the screen
 					#print "Destination System Name:", neighbour_info["Remote System Name"]
-					print "Remote Port Id:" , neighbour_info["Remote Port Id"]
-					print "Local Port Id:", neighbour_info["Local Port Id"]
+					self.logger.info( "Remote Port Id: " + neighbour_info["Remote Port Id"] +"")
+					self.logger.info( "Local Port Id: "+ neighbour_info["Local Port Id"] +"")
 					#print "Local Parent Interface Name:" , neighbour_info["Local Parent Interface Name"]
 					#print "Remote Chassis Id:", neighbour_info["Remote Chassis Id"]
 					#print "Remote Chassis Id Subtype:" , neighbour_info["Remote Port Id Subtype"]
-					print ''
+					self.logger.info( '' )
 				except KeyError, e:
-					pass
+					self.logger.error(traceback.format_exc)
 					# Do Nothing and just eat the exception
 					# Some keys are not present in all systems
 				if "Destination System: "+neighbour_info["Remote System Name"] in neighbour_dict:
@@ -173,7 +185,7 @@ class L1NetworkFlow():
 				else:
 					neighbour_dict["Destination System: "+neighbour_info["Remote System Name"]] = neighbour_info
 		except RpcError, e:
-			print "ERROR["+self.get_timestamp('%Y-%m-%d %H:%M:%S')+ "] LLDP is not supported on this device."
+			self.logger.info( "LLDP is not supported on this device." )
 			#Add this to neighbor dictionary
 
 		return neighbour_dict
@@ -272,30 +284,30 @@ class L1NetworkFlow():
 		graph_file_name = self.get_generated_filename("graph_","dot")
 		graph.write(graph_file_name) # write to simple.dot
 		# filename["dot"] = graph_file_name;
-		print ''
-		print "Wrote graph to "+graph_file_name 
+		self.logger.info( '' )
+		self.logger.info( "Wrote graph to "+graph_file_name )
 			
 		#neato, dot, twopi, circo, fdp, nop, wc, acyclic, gvpr, gvcolor, ccomps, sccmap, tred, sfdp.
 		# Write the graph to a SVG file
 		graph_file_name = self.get_generated_filename("graph_","svg")
 		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
 		# filename["svg"] = graph_file_name;
-		print ''
-		print "Wrote graph to DOT SVG file "+graph_file_name 
+		self.logger.info( '' )
+		self.logger.info( "Wrote graph to DOT SVG file "+graph_file_name )
 
 		# Write the graph to a SVG file
 		graph_file_name = self.get_generated_filename("graph_","pdf")
 		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
 		# filename["pdf"] = graph_file_name;
-		print ''
-		print "Wrote graph to PDF SVG file "+graph_file_name
+		self.logger.info( '' )
+		self.logger.info( "Wrote graph to PDF SVG file "+graph_file_name )
 
 		# Write the graph to a SVG file
 		graph_file_name = self.get_generated_filename("graph_","png")
 		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
 		# filename["png"] = graph_file_name;
-		print ''
-		print "Wrote graph to PDF SVG file "+graph_file_name
+		self.logger.info( '' )
+		self.logger.info( "Wrote graph to PDF SVG file "+graph_file_name )
 		# # return filename
 		
 
@@ -306,5 +318,5 @@ class L1NetworkFlow():
 		# Open the file (w+ creates the file if it doesn't exist)
 		output_file = open(json_file_name,'w+')
 		output_file.write(json.dumps(dictionary, indent = 4, sort_keys = True))
-		print ''
-		print "Wrote JSON to "+json_file_name
+		self.logger.info( '' )
+		self.logger.info( "Wrote JSON to "+json_file_name )
