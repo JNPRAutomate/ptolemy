@@ -442,18 +442,14 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     var request = $http({
                     method: "POST",
                     url: "/download-sample-template",
-                });
-    // Store the data-dump of the FORM scope.
-    request.success(
-        function( response ) {
-              var hiddenElement = document.createElement('a');
+                }).then(function( response ) {
+                          var hiddenElement = document.createElement('a');
 
-              hiddenElement.href = 'data:attachment/json;charset=utf8,'+ encodeURI(JSON.stringify(response,null, "\t"));
-              hiddenElement.target = '_blank';
-              hiddenElement.download = 'sample.ptpl';
-              hiddenElement.click();
-        }
-    );
+                          hiddenElement.href = 'data:attachment/json;charset=utf8,'+ encodeURI(JSON.stringify(response.data,null, "\t"));
+                          hiddenElement.target = '_blank';
+                          hiddenElement.download = 'sample.ptpl';
+                          hiddenElement.click();
+                    });
 
     }
 
@@ -493,19 +489,15 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
                           'Content-Type' : 'application/json'
                         },
                     data: $scope.configuration
-                  });
-      // Store the data-dump of the FORM scope.
-      request.success(
-          function( response ) {
-                $mdDialog.show({
-                  controller: DialogController,
-                  templateUrl: 'log_dialog.html',
-                  targetEvent: ev,
-                  clickOutsideToClose:true,
-                  locals: { global_log_text: response }
-                });
-          }
-      );
+                  }).then(function( response ) {
+                          $mdDialog.show({
+                              controller: DialogController,
+                              templateUrl: 'log_dialog.html',
+                              targetEvent: ev,
+                              clickOutsideToClose:true,
+                              locals: { global_log_text: response.data }
+                            });
+                    });
 
     }
 
@@ -589,21 +581,15 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
                           'Content-Type' : 'application/json'
                         },
                     data: $scope.configuration
-                });
-      // Store the data-dump of the FORM scope.
-      request.success(
-          function( response ) {
-              $scope.loading = false;
-              // Parse the SVG and change the height 
-              // Dirty hack to make the SVG fit the div
-              var parser = new DOMParser();
-              var svgContent = parser.parseFromString(response,"text/xml");
-              svgContent.getElementsByTagName("svg")
-              $scope.svgFile = response;
-              angular.element( document.querySelector( '#content_view' ) ).append($scope.svgFile);
-              $scope.$apply ();
-          }
-      );
+                }).then(function( response ) {
+                           $scope.loading = false;
+                            $scope.svgFile = response.data;
+                            // First clear any other graphs generated previously
+                            angular.element( document.querySelector( '#content_view' ) ).empty();
+                            // Append the newly generated content
+                            angular.element( document.querySelector( '#content_view' ) ).append($scope.svgFile);
+                            // $scope.$apply ();
+                    });
   }
 
   $scope.onTemplateSwitchChange = function(switchValue) {
