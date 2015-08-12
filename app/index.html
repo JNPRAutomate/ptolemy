@@ -354,7 +354,7 @@ var app = angular.module('myApp', ['ngMaterial','xeditable']);
 app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDialog, $log, $filter, $http, $q) {
 
   $scope.isTemplateDisabled = true;
-  $scope.global_credentials = true;
+  $scope.global_credentials = false;
   $scope.passwordField = "password";
 
   $scope.editableTable = false;
