@@ -2,12 +2,12 @@
 
 """
 Save this file as server.py
->>> python server.py 0.0.0.0 8001
+>>> python httpserver.py 0.0.0.0 8001
 serving on 0.0.0.0:8001
 
 or simply
 
->>> python server.py
+>>> python httpserver.py
 Serving on localhost:8000
 
 You can use this to test GET and POST methods.
@@ -21,7 +21,10 @@ import cgi
 from pprint import pprint
 import sys
 from os import path
+import os.path
 import json
+
+
 
 sys.path.append("../script")
 if len(sys.argv) > 2:
@@ -44,15 +47,17 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_POST(self):
         logging.warning("======= POST STARTED =======")
         logging.warning(self.headers)
+        length = int(self.headers.getheader('content-length'))
+        data = self.rfile.read(length)
+        configuration_details = json.loads(data)
+        filename = configuration_details["Filename"]
+        print filename
 
         if self.path == "/pageFour":
-            length = int(self.headers.getheader('content-length'))
-            data = self.rfile.read(length)
-            configuration_details = json.loads(data)
-            print configuration_details["Connection Details"][0]["hostname"]
             from ptolemy import get_network_flow
-            filename = get_network_flow(configuration_details)
-            f = open (filename["svg"],"r")
+            get_network_flow(configuration_details)
+            filename = self.get_file_name(filename,"svg")
+            f = open (filename,"r")
             contents = f.read ()
             self.wfile.write (contents) 
             f.close ()
@@ -64,9 +69,53 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.wfile.write (contents) 
             f.close ()
             return
+        elif self.path == "/download-svg":
+            filename = self.get_file_name(filename,"svg")
+            f = open (filename,"r")
+            contents = f.read ()
+            self.wfile.write (contents) 
+            f.close ()
+            return
+        elif self.path == "/download-pdf":
+            filename = self.get_file_name(filename,"pdf")
+            f = open (filename,"r")
+            contents = f.read ()
+            self.wfile.write (contents) 
+            f.close ()
+            return
+        elif self.path == "/download-dot":
+            filename = self.get_file_name(filename,"dot")
+            f = open (filename,"r")
+            contents = f.read ()
+            self.wfile.write (contents) 
+            f.close ()
+            return
+        elif self.path == "/download-png":
+            filename = self.get_file_name(filename,"png")
+            f = open (filename,"r")
+            contents = f.read ()
+            self.wfile.write (contents) 
+            f.close ()
+            return
+        elif self.path == "/download-json":
+            filename = self.get_file_name(filename,"json")
+            f = open (filename,"r")
+            contents = f.read ()
+            self.wfile.write (contents) 
+            f.close ()
+            return
+        elif self.path == "/download-all":
+            f = open (filename,"r")
+            contents = f.read ()
+            self.wfile.write (contents) 
+            f.close ()
+            return
         else:
             logging.warning("======= POST VALUES =======")
         SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+
+    def get_file_name(self, receivedfilename, extension):
+        return "generated" + os.path.sep + extension + os.path.sep + receivedfilename + "." + extension
 
 Handler = ServerHandler
 

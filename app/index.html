@@ -395,6 +395,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
         $scope.pageTwoVisible = false;
         $scope.pageThreeVisible = true;
         $scope.pageFourVisible = false;
+        $scope.Filename = $scope.timestamp();
 
         if ($scope.global_credentials) {
           $scope.user_credentials = {
@@ -405,14 +406,16 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
             "Global Credentials" : $scope.user_credentials,
             "Output Formats" : $scope.selected_output_formats,
             "Logs" : $scope.logs,
-            "Connection Details": ""
+            "Connection Details": "",
+            "Filename": $scope.Filename
           });
         } else {
           $scope.configuration.push({
             "Global Credentials" : 'None',
             "Output Formats" : $scope.selected_output_formats,
             "Logs" : $scope.logs,
-            "Connection Details": ''
+            "Connection Details": '',
+            "Filename": $scope.Filename
           });
         };
         
@@ -457,13 +460,17 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
       var request = $http({
                       method: "POST",
                       url: postUrl,
+                      headers : {
+                          'Content-Type' : 'application/json'
+                        },
+                    data: $scope.configuration
                   });
       // Store the data-dump of the FORM scope.
       request.success(
           function( response ) {
                 var hiddenElement = document.createElement('a');
 
-                hiddenElement.href = 'data:attachment'+ encodeURI(response);
+                hiddenElement.href = 'data:attachment/image/svg+xml'+ encodeURI(response);
                 hiddenElement.target = '_blank';
                 hiddenElement.download = 'output.'+ $scope.view_format.toLowerCase();
                 hiddenElement.click();
@@ -606,6 +613,19 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     $scope.passwordEncodedTemplateString = JSON.stringify($scope.passwordEncodedTemplateString, null, "\t");
     $scope.templateUploaded = true;
   };
+
+
+  $scope.timestamp = function() {         
+                                
+        var yyyy = Date.prototype.getFullYear().toString();                                    
+        var mm = (Date.prototype.getMonth()+1).toString(); // getMonth() is zero-based         
+        var dd  = Date.prototype.getDate().toString(); 
+        var hh  = Date.prototype.getHours().toString(); 
+        var mim  = Date.prototype.getMinutes().toString();    
+        var ss = Date.prototype.getSeconds().toString();      
+                            
+        return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]) + hh + mim+ ss;
+   }; 
 
   // filter users to show
   $scope.filterConnections = function(device) {

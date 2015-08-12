@@ -50,6 +50,7 @@ def main(argv):
 def get_network_flow(configuration_details):
 	# Parse the details
 	global_credentials = configuration_details["Global Credentials"]
+	filename = configuration_details["Filename"]
 	device_data = {"data":[]}
 	if global_credentials == "None":
 		connection_details = configuration_details["Connection Details"]
@@ -76,8 +77,8 @@ def get_network_flow(configuration_details):
 			device["Port"] = connection["port"]
 			device_data["data"].append(device)
 	network = L1NetworkFlow()
-	filename = network.get_network_flow(device_data["data"])
-	return filename
+	network.get_network_flow_external(device_data["data"],filename)
+	# return filename
 
 if __name__ == "__main__":
     main(sys.argv[1:])

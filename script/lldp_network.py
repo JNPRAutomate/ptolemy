@@ -18,6 +18,13 @@ class L1NetworkFlow():
 	def __init__(self):
 		self.lldp_neighbours_dict = {}
 		self.live_nodes = set()
+		self.filename = ""
+		self.useCurrentTimeStamp = True
+
+	def get_network_flow_external(self, device_data, filename):
+		self.receivedfilename = filename
+		self.useCurrentTimeStamp = False
+		self.get_network_flow(device_data)
 
 	def get_network_flow(self, device_data):
 
@@ -72,7 +79,7 @@ class L1NetworkFlow():
 
 		#Generate the graph from the datastructures generated
 		filename = self.generate_graph(self.lldp_neighbours_dict,self.live_nodes)
-		return filename
+		# return filename
 
 	def get_password(self,hostname,username):
 		print 'Enter password associated with Hostname: '+hostname+' and Username: '+username 
@@ -241,12 +248,15 @@ class L1NetworkFlow():
 
 		# Generate the graph once the whole topology is parsed
 		filename = self.write_graph(lldp_neighbours_graph)
-		return filename
+		# return filename
 
 	def get_generated_filename(self,filename, extension):
 		# append the file name with local time stamp
-		stringTimeStamp = self.get_timestamp('%Y_%m_%d_%H%M%S')
-		filename = "generated" + os.path.sep + extension + os.path.sep + filename + stringTimeStamp + "." + extension
+		if self.useCurrentTimeStamp:
+			stringTimeStamp = self.get_timestamp('%Y_%m_%d_%H%M%S')
+			filename = "generated" + os.path.sep + extension + os.path.sep + filename + stringTimeStamp + "." + extension
+		else :
+			filename = "generated" + os.path.sep + extension + os.path.sep + self.receivedfilename + "." + extension
 		directory = os.path.dirname(filename)
 		if not os.path.exists(directory):
 		    os.makedirs(directory)
@@ -258,12 +268,10 @@ class L1NetworkFlow():
 		return stringTimeStamp
 
 	def write_graph(self, graph):
-		# Make a note of all files generated
-		filename = {};
 		# Write the graph to a dot file
 		graph_file_name = self.get_generated_filename("graph_","dot")
 		graph.write(graph_file_name) # write to simple.dot
-		filename["dot"] = graph_file_name;
+		# filename["dot"] = graph_file_name;
 		print ''
 		print "Wrote graph to "+graph_file_name 
 			
@@ -271,24 +279,24 @@ class L1NetworkFlow():
 		# Write the graph to a SVG file
 		graph_file_name = self.get_generated_filename("graph_","svg")
 		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
-		filename["svg"] = graph_file_name;
+		# filename["svg"] = graph_file_name;
 		print ''
 		print "Wrote graph to DOT SVG file "+graph_file_name 
 
 		# Write the graph to a SVG file
 		graph_file_name = self.get_generated_filename("graph_","pdf")
 		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
-		filename["pdf"] = graph_file_name;
+		# filename["pdf"] = graph_file_name;
 		print ''
 		print "Wrote graph to PDF SVG file "+graph_file_name
 
 		# Write the graph to a SVG file
 		graph_file_name = self.get_generated_filename("graph_","png")
 		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
-		filename["png"] = graph_file_name;
+		# filename["png"] = graph_file_name;
 		print ''
 		print "Wrote graph to PDF SVG file "+graph_file_name
-		return filename
+		# # return filename
 		
 
 
