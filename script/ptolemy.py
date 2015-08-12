@@ -47,6 +47,38 @@ def main(argv):
 	network = L1NetworkFlow()
 	network.get_network_flow(connection_data)
 
+def get_network_flow(configuration_details):
+	# Parse the details
+	global_credentials = configuration_details["Global Credentials"]
+	device_data = {"data":[]}
+	if global_credentials == "None":
+		connection_details = configuration_details["Connection Details"]
+		for connection in connection_details:
+			device = {}
+			device["Hostname"] = connection["hostname"]
+			device["Username"] = connection["username"]
+			device["Password"] = connection["password"]
+			device["SSH Key Path"] = ""
+			device["Port"] = connection["port"]
+			device_data["data"].append(device)
+	else:
+		global_username = global_credentials["username"]
+		print "Username :" + global_username
+		global_password = global_credentials["password"]
+		print "Password :" + global_password
+		connection_details = configuration_details["Connection Details"]
+		for connection in connection_details:
+			device = {}
+			device["Hostname"] = connection["hostname"]
+			device["Username"] = global_username
+			device["Password"] = global_password
+			device["SSH Key Path"] = ""
+			device["Port"] = connection["port"]
+			device_data["data"].append(device)
+	network = L1NetworkFlow()
+	filename = network.get_network_flow(device_data["data"])
+	return filename
+
 if __name__ == "__main__":
     main(sys.argv[1:])
 

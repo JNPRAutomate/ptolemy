@@ -37,21 +37,27 @@
   .editable-error{
     color: red
   }
+  pre {
+    white-space: pre-wrap;       /* CSS 3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  }
   </style>
 
 </head>
 <body>
 <div ng-controller="AppCtrl" layout="column">
   <section layout="row" flex>
-    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="true">
-      <md-content layout-padding>
-        <!-- <p hide-md show-gt-md>
-          This sidenav is locked open on your device. To go back to the default behavior,
-          narrow your display.
-        </p> -->
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="sidebar == true">
+      <md-content layout-padding layout="column">
         <img ng-src="img/icons/logo.png" alt="Ptolemy - The Network Cartographer" style="padding-left:40px" layout-align="center center">
+        <img ng-src="img/icons/glyphicons_collapse.png" alt="Hide" style="padding-left:40px" layout-align="center center">
       </md-content>
+      <md-button class="md-primary" layout-align="bottom right" ng-click="hideSideNav()" ng-show="sidebar == true"> Hide </md-button>
     </md-sidenav>
+    <md-button class="md-primary" layout-align="bottom right" ng-click="hideSideNav()" ng-show="sidebar == false"> Hide </md-button>
     <md-content flex layout-padding>
 
     	<md-toolbar class="md-theme-indigo">
@@ -74,9 +80,10 @@
                 <a href="downloadUrl" id="fileDownloadLink" ng-hide="true"></a>
                 </span>
                 <div ng-show="templateUploaded == true">
-                  <!-- <span editable-textarea="template" ng-show="templateEditable == false"> -->
-                  <!-- e-rows="7" e-cols="40" -->
-                    <pre>{{ template }}</pre>
+                  <h3>Template</h3>
+                    <md-checkbox md-no-ink ng-init="showPasswords == false" class="md-primary" ng-model="showPasswords" aria-label="Show Password" ng-true-value="true" ng-false-value="false"> Show Passwords</md-checkbox>
+                    <pre ng-show="showPasswords == true">{{ template }}</pre>
+                    <pre ng-show="showPasswords == false">{{ passwordEncodedTemplate }}</pre>
                   <!-- </span> -->
 
                 </div>
@@ -162,12 +169,16 @@
                         <fieldset class="standard" flex>
                           <legend>Logs</legend>
                           <div layout="row" layout-wrap>
-                            <md-checkbox md-no-ink class="md-primary" ng-model="log_config.global_log" aria-label="Generate Global Logs" >
+                            <md-radio-group ng-model="log_config">
+                              <md-radio-button value="global_log" class="md-primary">Generate Global Logs</md-radio-button>
+                              <md-radio-button value="device"> Generate Logs Per Device </md-radio-button>
+                            </md-radio-group>
+                            <!-- <md-checkbox md-no-ink class="md-primary" ng-model="log_config.global_log" aria-label="Generate Global Logs" >
                             Generate Global Logs
                            </md-checkbox>
                            <md-checkbox md-no-ink class="md-primary" ng-model="log_config.device" aria-label="Generate Logs Per Device">
                             Generate Logs Per Device
-                           </md-checkbox>
+                           </md-checkbox> -->
                            
                           </div>
                         </fieldset>
@@ -284,13 +295,16 @@
                   <md-button class="md-raised md-primary" ng-click="" > Download All Formats </md-button>
                   <md-button class="md-raised md-primary" ng-click="" > Save Configuration as Template </md-button>
                   </span>
-                
-                  <div id='content_view' style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
-                    <svg ng-show="view_format.format == 'svg'">
-                    <!-- /Users/animeshk/_Animesh/Workspaces/Git/ptolemy/script/generated -->
-                      <img src="svg/dot2015_08_06_184100.svg" alt="LLDP Image in SVG">
-                    </svg>
-                    <embed ng-show="view_format.format == 'pdf'" src="pdf/pdf2015_08_07_160920.pdf">
+
+                  <!-- View to Indicate that work is in progress -->
+                  <div id="loading_div" ng-show="loading == true">
+                      <h4>This might take a while. Please wait...</h4>
+                      <div layout="row" layout-sm="column" layout-align="space-around">
+                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                      </div>
+                  </div>
+                  <!-- View to Show the results -->
+                  <div id='content_view' ng-show="loading == false" style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
                   </div>
                 </div>
               </md-card-content>
@@ -347,6 +361,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
   $scope.connectionDetailsUploaded = false;
   $scope.templateUploaded = false;
   $scope.templateEditable = false;
+  $scope.showPasswords = false;
 
   $scope.configuration = [];
 
@@ -355,6 +370,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 	$scope.pageOneVisible = true;
 	$scope.pageTwoVisible = false;
 	$scope.pageThreeVisible = false;
+  $scope.sidebar = true;
   // $scope.format.dot = true;
   // $scope.format.json = true;
   // $scope.format.svg = true;
@@ -362,6 +378,11 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
   // $scope.format.png = true;
 
   // $scope.log_config.global_log = true;
+
+  $scope.hideSideNav = function () {
+   $mdSidenav('left').close();
+   $scope.sidebar = !$scope.sidebar;
+  }
 
 	$scope.PageOne = function () {
 		$scope.pageOneVisible = true;
@@ -417,12 +438,16 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     });
 
     // If any log type is checked, add it to configuration
-    angular.forEach($scope.log_config, function(value, key) {
-      if (value) {
-        $scope.logs.push(key);
-      };
-    });
-
+    // angular.forEach($scope.log_config, function(value, key) {
+    //   if (value) {
+    //     $scope.logs.push(key);
+    //   };
+    // });
+    if ($scope.log_config == 'device') {
+      $scope.logs = "Device"
+    } else {
+      $scope.logs = "Global"
+    };
     // Validate if Credentials are entered if gloval credentials is checked
     if (($scope.global_credentials && !$scope.global_user) || ($scope.global_credentials && (!$scope.global_user.username || !$scope.global_user.password))) {
       $mdDialog.show(
@@ -443,21 +468,21 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 
         if ($scope.global_credentials) {
           $scope.user_credentials = {
-            'username' : $scope.global_user.username,
-            'password' : $scope.global_user.password
+            "username" : $scope.global_user.username,
+            "password" : $scope.global_user.password
           };
           $scope.configuration.push({
-            'Global Credentials' : $scope.user_credentials,
-            'Output Formats' : $scope.output_formats,
-            'Logs' : $scope.logs,
-            'Connection Details': ''
+            "Global Credentials" : $scope.user_credentials,
+            "Output Formats" : $scope.output_formats,
+            "Logs" : $scope.logs,
+            "Connection Details": ""
           });
         } else {
           $scope.configuration.push({
-            'Global Credentials' : 'None',
-            'Output Formats' : $scope.output_formats,
-            'Logs' : $scope.logs,
-            'Connection Details': ''
+            "Global Credentials" : 'None',
+            "Output Formats" : $scope.output_formats,
+            "Logs" : $scope.logs,
+            "Connection Details": ''
           });
         };
         
@@ -544,6 +569,8 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     if($scope.connectionDetailsUploaded || ($scope.connectionDetails && $scope.connectionDetails.length > 0  && $scope.connectionDetails[0]['hostname'])){
       // Push Connection Details to Configuration
       $scope.configuration[0]['Connection Details'] = $scope.connectionDetails;
+      // Hack to Send it at a dictionary instead of a list of one element
+      $scope.configuration = $scope.configuration[0];
       $scope.GenerateGraph();
     } else {
       $mdDialog.show(
@@ -564,6 +591,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
       $scope.pageTwoVisible = false;
       $scope.pageThreeVisible = false;
       $scope.pageFourVisible = true;
+      $scope.loading = true;
 
       var request = $http({
                     method: "POST",
@@ -575,8 +603,16 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
                 });
       // Store the data-dump of the FORM scope.
       request.success(
-          function( html ) {
-              $scope.cfdump = html;
+          function( response ) {
+              $scope.loading = false;
+              // Parse the SVG and change the height 
+              // Dirty hack to make the SVG fit the div
+              var parser = new DOMParser();
+              var svgContent = parser.parseFromString(response,"text/xml");
+              svgContent.getElementsByTagName("svg")
+              $scope.svgFile = response;
+              angular.element( document.querySelector( '#content_view' ) ).append($scope.svgFile);
+              $scope.$apply ();
           }
       );
   }
@@ -653,6 +689,13 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
   $scope.loadTemplate = function($fileContent){
     //Parse the file content and put it into connection details
     $scope.template = $fileContent;
+    $scope.passwordEncodedTemplate = JSON.parse($fileContent);
+    $scope.passwordEncodedTemplate["Global Credentials"]["password"] = "***";
+    for (var i = 0; i < $scope.passwordEncodedTemplate["Connection Details"].length; i++) {
+      $scope.passwordEncodedTemplate["Connection Details"]["password"] = "***";
+    };
+    $scope.templateString = JSON.stringify($scope.template, null, "\t");
+    $scope.passwordEncodedTemplateString = JSON.stringify($scope.passwordEncodedTemplateString, null, "\t");
     $scope.templateUploaded = true;
   };
 

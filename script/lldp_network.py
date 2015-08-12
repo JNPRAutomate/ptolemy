@@ -71,7 +71,8 @@ class L1NetworkFlow():
 		self.write_json(self.lldp_neighbours_dict)
 
 		#Generate the graph from the datastructures generated
-		self.generate_graph(self.lldp_neighbours_dict,self.live_nodes)
+		filename = self.generate_graph(self.lldp_neighbours_dict,self.live_nodes)
+		return filename
 
 	def get_password(self,hostname,username):
 		print 'Enter password associated with Hostname: '+hostname+' and Username: '+username 
@@ -239,7 +240,8 @@ class L1NetworkFlow():
 				node.attr['fontcolor'] = 'orange'
 
 		# Generate the graph once the whole topology is parsed
-		self.write_graph(lldp_neighbours_graph)
+		filename = self.write_graph(lldp_neighbours_graph)
+		return filename
 
 	def get_generated_filename(self,filename, extension):
 		# append the file name with local time stamp
@@ -256,56 +258,37 @@ class L1NetworkFlow():
 		return stringTimeStamp
 
 	def write_graph(self, graph):
+		# Make a note of all files generated
+		filename = {};
 		# Write the graph to a dot file
-		graph_file_name = self.get_generated_filename("lldp_neighbours_graph_","dot")
+		graph_file_name = self.get_generated_filename("graph_","dot")
 		graph.write(graph_file_name) # write to simple.dot
+		filename["dot"] = graph_file_name;
 		print ''
 		print "Wrote graph to "+graph_file_name 
-
-		
 			
 		#neato, dot, twopi, circo, fdp, nop, wc, acyclic, gvpr, gvcolor, ccomps, sccmap, tred, sfdp.
 		# Write the graph to a SVG file
-		graph_file_name = self.get_generated_filename("dot","svg")
+		graph_file_name = self.get_generated_filename("graph_","svg")
 		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
+		filename["svg"] = graph_file_name;
 		print ''
 		print "Wrote graph to DOT SVG file "+graph_file_name 
 
-		# # Write the graph to a SVG file
-		# graph_file_name = self.get_generated_filename("twopi","svg")
-		# graph.draw(graph_file_name,prog='twopi') # draw to png using circo
-		# print ''
-		# print "Wrote graph to DOT SVG file "+graph_file_name
-
-		# # Write the graph to a SVG file
-		# graph_file_name = self.get_generated_filename("fdp","svg")
-		# graph.draw(graph_file_name,prog='fdp') # draw to png using circo
-		# print ''
-		# print "Wrote graph to DOT SVG file "+graph_file_name
-
 		# Write the graph to a SVG file
-		graph_file_name = self.get_generated_filename("pdf","pdf")
-		graph.draw(graph_file_name,prog='quartz') # draw to png using circo
+		graph_file_name = self.get_generated_filename("graph_","pdf")
+		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
+		filename["pdf"] = graph_file_name;
 		print ''
 		print "Wrote graph to PDF SVG file "+graph_file_name
 
 		# Write the graph to a SVG file
-		graph_file_name = self.get_generated_filename("png","png")
-		graph.draw(graph_file_name,prog='dot') # draw to png using circo
+		graph_file_name = self.get_generated_filename("graph_","png")
+		graph.draw(graph_file_name,prog='dot',args='-Gsplines=ortho') # draw to png using circo
+		filename["png"] = graph_file_name;
 		print ''
 		print "Wrote graph to PDF SVG file "+graph_file_name
-
-		# Write the graph to a PNG file
-		graph_file_name = self.get_generated_filename("png","png")
-		graph.draw(graph_file_name) # draw to png using circo
-		print ''
-		print "Wrote graph to DOT SVG file "+graph_file_name
-
-		# Write the graph to a dot file
-		# graph_file_name = self.get_generated_filename("lldp_neighbours_graph_","png")
-		# graph.draw(graph_file_name, prog="neato") # draw to png using circo
-		# print ''
-		# print "Wrote graph to image file "+graph_file_name 
+		return filename
 		
 
 
