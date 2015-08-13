@@ -229,7 +229,7 @@ class L1NetworkFlow():
 					# Hack to prevent edge labels overlapping edges
 					#lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi",dir='both', style='invis', headlabel=remote_port+"invi", taillabel=local_port+"invi", minlen = 5)
 					# Draw the actual edge
-					lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', headlabel="    "+remote_port+"    ", taillabel="    "+local_port+"    ", style='bold',color='blue', minlen=5)
+					lldp_neighbours_graph.add_edge(source,destination,key=key_str,dir='both', headlabel="    "+remote_port+"    ", taillabel="    "+local_port+"    ", style='bold',color='blue', minlen=3)
 					# Hack to prevent edge labels overlapping edges
 					#lldp_neighbours_graph.add_edge(source,destination,key=key_str+"invi1",dir='both', style='invis', headlabel=remote_port+"invi1", taillabel=local_port+"invi1", minlen = 5)
 					# Add the edge to a dictionary so that bi directional edges don't get repeated
@@ -252,8 +252,8 @@ class L1NetworkFlow():
 		# Resize all the nodes based on the number of incoming and outgoing nodes edges
 		for node in lldp_neighbours_graph.nodes():
 			if edge_count[node] > 0:
-				node.attr['height'] = 0.6 * edge_count[node]
-				node.attr['width'] = 0.6 * edge_count[node]
+				node.attr['height'] = 0.3 * edge_count[node]
+				node.attr['width'] = 0.3 * edge_count[node]
 			else:
 				node.attr['height'] = 2
 				node.attr['fontcolor'] = 'orange'

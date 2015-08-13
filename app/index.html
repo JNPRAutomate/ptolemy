@@ -7,6 +7,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
   <!-- JQuery Min for File Upload and Reading content of file -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="lib/pan-zoom-svg/dist/jquery.panzoom.js"></script> 
   <!-- Script for Editable table and Text Area -->
   <script src="js/xeditable.js"></script>
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css">
@@ -265,21 +266,63 @@
                 <div ng-show="loading == false">
                   <h1 class="md-title">Network Topology</h1>
                   <span>
-                  <label>View As</label>
+                  <label>Download Output As</label>
                   <md-select placeholder="Content Type" ng-model="view_format">
                     <md-option ng-repeat="view_format in selected_output_formats" value="{{view_format}}">{{view_format}}</md-option>
                   </md-select>
                   <md-button class="md-raised md-primary" ng-click="downloadOutput()" > Download </md-button>
-                  <md-button class="md-raised md-primary" ng-click="downloadOutputAllFormats()" > Download All Formats </md-button>
+                  <!-- <md-button class="md-raised md-primary" ng-click="downloadOutputAllFormats()" > Download All Formats </md-button> -->
                   <md-button class="md-raised md-primary" ng-click="downloadConfigurationAsTemplate()" > Save Configuration as Template </md-button>
                   <md-button class="md-primary md-raised" ng-click="viewLogGlobal($event)" flex flex-md="100">
                     View Logs
                   </md-button>
                   </span>
 
+
+                   <section>
+                    <div class="parent">
+                      <div class="buttons">
+                          <button class="zoom-in">Zoom In</button>
+                          <button class="zoom-out">Zoom Out</button>
+                          <input type="range" class="zoom-range">
+                          <button class="reset">Reset</button>
+                      </div>
+
+                      <div class="panzoom" id="svg_container" style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
+                        <!-- <img src="asd.svg" width="900" height="900"> -->
+                      </div>
+                    </div>
+                    
+                    <script>
+                      (function() {
+                        var $section = $('section').first();
+                        $section.find('.panzoom').panzoom({
+                          $zoomIn: $section.find(".zoom-in"),
+                          $zoomOut: $section.find(".zoom-out"),
+                          $zoomRange: $section.find(".zoom-range"),
+                          $reset: $section.find(".reset")
+                        });
+                      })();
+                    </script>
+                  </section>
+
+
+
+
+
+
+
                   <!-- View to Show the results -->
-                  <div id='content_view' style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
-                  </div>
+                  <!-- <div id='content_view' style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
+                  <button class="zoom-in">Zoom In</button>
+                  <button class="zoom-out">Zoom Out</button>
+                  <input type="range" class="zoom-range">
+                  <button class="reset">Reset</button>
+                  <div id="svg_container"></div>
+                  </div> -->
+
+
+
                 </div>
               </md-card-content>
           </md-card>
@@ -325,10 +368,13 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 	$scope.pageThreeVisible = false;
   $scope.sidebar = true;
   $scope.log_config = "global_log";
-  $scope.output_formats = ["DOT","JSON","SVG","PDF","PNG"];
-  $scope.selected_output_formats = ["DOT","JSON","SVG","PDF","PNG"];
+  // $scope.output_formats = ["DOT","JSON","SVG","PDF","PNG"];
+  $scope.output_formats = ["DOT","JSON","SVG"];
+  // $scope.selected_output_formats = ["DOT","JSON","SVG","PDF","PNG"];
+  $scope.selected_output_formats = ["DOT","JSON","SVG"];
   $scope.view_format = "SVG";
   $scope.collapse_expand_image = "img/icons/glyphicons_collapse.png";
+  $scope.svgFile = "";
 
   $scope.toggle_output_formats = function (item, list) {
         var idx = list.indexOf(item);
@@ -594,12 +640,13 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
                             if (svg.length > 0 ) {
                               svg[0].setAttribute("width","100%");
                               svg[0].setAttribute("height","100%");
+                              svg[0].setAttribute("id","svg_control");
                             };
                             // First clear any other graphs generated previously
-                            angular.element( document.querySelector( '#content_view' ) ).empty();
+                            angular.element( document.querySelector( '#svg_container' ) ).empty();
                             // Append the newly generated content
-                            // $scope.svgFile = doc;
-                            angular.element( document.querySelector( '#content_view' ) ).append(svg[0]);
+                            $scope.svgFile = svg[0];
+                            angular.element( document.querySelector( '#svg_container' ) ).append($scope.svgFile);
                     });
   }
 
@@ -634,7 +681,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     $scope.passwordEncodedTemplate = JSON.parse($fileContent);
     $scope.passwordEncodedTemplate["Global Credentials"]["password"] = "***";
     for (var i = 0; i < $scope.passwordEncodedTemplate["Connection Details"].length; i++) {
-      $scope.passwordEncodedTemplate["Connection Details"]["password"] = "***";
+      $scope.passwordEncodedTemplate["Connection Details"][i]["password"] = "***";
     };
     $scope.templateString = JSON.stringify($scope.template, null, "\t");
     $scope.passwordEncodedTemplateString = JSON.stringify($scope.passwordEncodedTemplateString, null, "\t");
