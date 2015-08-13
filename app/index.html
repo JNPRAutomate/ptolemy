@@ -279,7 +279,48 @@
                   </span>
 
 
-                   <section>
+                  <section id="inverted-contain" style="margin-top:20px">
+                      <div class="buttons">
+                        <button class="zoom-in">
+                            <md-icon md-svg-src="img/icons/ic_zoom_in_black_24px.svg"></md-icon>
+                        </button>
+                        <button class="zoom-out" aria-label="Zoom Out">
+                            <md-icon md-svg-src="img/icons/ic_zoom_out_black_24px.svg"></md-icon>
+                        </button>
+                        <input type="range" class="zoom-range">
+                        <button class="reset" aria-label="Reset">
+                            <md-icon md-svg-src="img/icons/ic_settings_backup_restore_black_24px.svg"></md-icon>
+                        </button>
+                       <!--  <button class="zoom-in">Zoom In</button>
+                        <button class="zoom-out">Zoom Out</button>
+                        
+                        <button class="reset">Reset</button> -->
+                      </div>
+                      <div class="panzoom-parent" style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
+                        <div class="panzoom" id="svg_container">
+                      </div>
+                      </div>
+                      <style>
+                        #inverted-contain .panzoom { width: 100%; height: 100%; }
+                      </style>
+                      <script>
+                        (function() {
+                          var $section = $('#inverted-contain');
+                          $section.find('.panzoom').panzoom({
+                            $zoomIn: $section.find(".zoom-in"),
+                            $zoomOut: $section.find(".zoom-out"),
+                            $zoomRange: $section.find(".zoom-range"),
+                            $reset: $section.find(".reset"),
+                            startTransform: 'scale(1)',
+                            increment: 0.1,
+                            minScale: 1,
+                            contain: 'invert'
+                          }).panzoom('zoom');
+                        })();
+                      </script>
+                    </section>
+
+                   <!-- <section>
                     <div class="parent">
                       <div class="buttons">
                           <button class="zoom-in">Zoom In</button>
@@ -289,7 +330,6 @@
                       </div>
 
                       <div class="panzoom" id="svg_container" style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
-                        <!-- <img src="asd.svg" width="900" height="900"> -->
                       </div>
                     </div>
                     
@@ -304,7 +344,7 @@
                         });
                       })();
                     </script>
-                  </section>
+                  </section> -->
 
 
 
