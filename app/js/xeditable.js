@@ -2,7 +2,10 @@
 angular-xeditable - 0.1.8
 Edit-in-place for angular.js
 Build date: 2014-01-10 
-*/
+Copyright (c) 2015 Vitaliy Potapov
+Released under the MIT license
+https://github.com/vitalets/angular-xeditable/blob/master/LICENSE
+ */
 /**
  * Angular-xeditable module 
  *
