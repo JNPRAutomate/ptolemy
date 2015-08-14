@@ -1,4 +1,4 @@
-# Ptolemy - The network cartographer
+# PTOLEMY - THE NETWORK CARTOGRAPHER
 
 The repository is under active development.  If you take a clone, you are getting the latest, and perhaps not entirely stable code.
 
@@ -35,7 +35,7 @@ git clone https://github.com/JNPRAutomate/ptolemy.git
 ```
 	
 
-## Usage
+## USAGE
 
 NOTE : Devices which the script attempts to connect must have NETCONF and LLDP enabled on the specified port or the default port
 
@@ -68,11 +68,11 @@ Hostname,Username,Password,SSH Key Path,Port
 172.21.202.36,animesh,abc@123,/home/vagrant/code/ptolemy/ssh/vagrant,830
 ```
 
-## Known Issues
+## KNOWN ISSUES
 - No Support for Python 3
 - Issues with graphviz-2.38 and 2.39
 
-## Copyrights and License
+## COPYRIGHTS and LICENSE
 
 Copyright 2015 Juniper Networks, Inc. under the [Apache License](LICENSE)
   
@@ -80,5 +80,9 @@ Copyright 2015 Juniper Networks, Inc. under the [Apache License](LICENSE)
 	
   - [Rob Cameron](https://github.com/RobWC)
   - [Animesh Kumar](https://github.com/animesh-kumar)
+
+## THANKS
+
+Developing this tool wouldn't have been possible without [Python](https://www.python.org), [Junos PyEz](https://github.com/Juniper/py-junos-eznc), [Graphviz](http://www.graphviz.org), [PyGraphviz](http://pygraphviz.github.io),[AngularJS](https://angularjs.org), [JQuery](https://jquery.com), [Angular-Xeditable](http://vitalets.github.io/angular-xeditable/) and [jQuery.panzoom](http://timmywil.github.io/jquery.panzoom/)
 
 
