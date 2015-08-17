@@ -19,6 +19,14 @@ Uncheck Global Configuration and Choose output formats and Log Types
 ##### Step 3: Enter the device details
 ![Choose a CSV File with Connection details for the devices and/or Click edit to make changes to the existing table by add, removing and editing device credentials.](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Build_Step3.png)
 
+#### Step 4 (Optional) : Confirm the changes made in the table if any or cancel to discard them.
+![Choose Confirm after adding/editing/removing device details to save the changes or click Cancel to discard them.](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Build_Step4_1.png)
+
+![If you choose Global User Credentials then providing Username and Password for each device is not needed as only Global User Credentials will only be picked whilke running the program.](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Build_Step4_2.png)
+
+#### Step 5 : Click on Generate Graph button
+![Click on Generate graph to finish graph generation](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Build_Step5.png)
+
 
 
 #### Generating graph from an existing template
@@ -29,3 +37,4 @@ Uncheck Global Configuration and Choose output formats and Log Types
 
 ##### Step 3: Click on Generate Graph button
 ![Click on Choose File for Browse Template to select the template file consiting of an already existing configuration and then Click on Generate graph to finish graph generation](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Template_Step2and3.png)
+
