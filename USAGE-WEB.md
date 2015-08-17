@@ -61,7 +61,7 @@ Sample Template:-
 
 [Dowload Sample Template](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleTemplate.ptpl)
 
-'''
+```
 {
 	"Global Credentials": "None",
 	"Output Formats": [
@@ -102,9 +102,9 @@ Sample Template:-
 	],
 	"Filename": "lldp_graph"
 }
-'''
+```
 
 
-Global Logs
+##### Global Logs
 ![Logs](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Output_2.png)
 
