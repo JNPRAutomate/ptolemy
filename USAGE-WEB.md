@@ -55,7 +55,7 @@ Read the details about how a valid [CSV File](VALID-CSV.md) will look like.
 [DOT](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.dot), [SVG](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.svg), [JSON](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.json)
 
 A Sample output in SVG Format
-![SVG Format Output](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.svg)
+![Sample Output](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.png)
 
 ##### Sample Template
 
