@@ -51,13 +51,13 @@ Read the details about how a valid [CSV File](VALID-CSV.md) will look like.
 
 #### Sample Outputs
 
-Download Sample Outputs:-
+##### Download Sample Outputs
 [DOT](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.dot), [SVG](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.svg), [JSON](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.json)
 
 A Sample output in SVG Format
 ![SVG Format Output](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.svg)
 
-Sample Template:-
+##### Sample Template
 
 [Dowload Sample Template](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleTemplate.ptpl)
 
