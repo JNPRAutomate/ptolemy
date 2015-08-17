@@ -9,4 +9,7 @@ Other optional parameters that can be specified are:-
 -p | --password : Another parameter can be used for global authentication by specifying a global password which can be used by all hosts for specified global username.
 -p | --password : This parameter can be used for global authentication along with global username by specifying a global SSH Private Key File Path which can be used by all hosts.
 
+
+python ptolemy.py -i <csv_file_path> --user = "animesh" --password="abc@123"
+
 ```

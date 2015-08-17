@@ -3,11 +3,6 @@
 This repository is under active development.  If you take a clone, you are getting the latest, and perhaps not entirely stable code.
 
 
-
-## DOCUMENTATION
-
-
-
 ## ABOUT
 
 _Ptolemy_ is a Python Library and Web Tool for [LLDP](https://en.wikipedia.org/wiki/Link_Layer_Discovery_Protocol) network visualization tool. This tool represents the LLDP networks in terms of bidirectional network graph diagrams showing various connections and interfaces between the devices and giving a high level overview of the network. Mapping an entire network topology into a diagram is a tedious task and might take hours and various licensed tools to be done manually. Editing these diagrams once the network topology changes gets even more tedious and time consuming foe very complex networks. We have tried to automate this process and provide customers with an ***open source*** and easy to use tool to map a topology within minutes and few simple steps.
@@ -37,36 +32,17 @@ git clone https://github.com/JNPRAutomate/ptolemy.git
 
 ## USAGE
 
-NOTE : Devices which the script attempts to connect must have NETCONF and LLDP enabled on the specified port or the default port
 
-```
-python ptolemy.py -i <csv_file_path>
+---
+**NOTE** : Devices which the script attempts to connect must have NETCONF and LLDP enabled on the specified port or the default port
+---
 
--i | --in : indicates option to provide device information in the form of a CSV. It's a mandatory argument.
-The program currently supports only device information in form of a CSV.
-
-Other optional parameters that can be specified are:-
--u | --user : This parameter can be used for global authentication by specifying a global username which can be used by all hosts. This parameter must always be used  either with -p | --password or -s | --ssh option.
--p | --password : Another parameter can be used for global authentication by specifying a global password which can be used by all hosts for specified global username.
--p | --password : This parameter can be used for global authentication along with global username by specifying a global SSH Private Key File Path which can be used by all hosts.
-
-```
+### Web UI
 
 
-A valid CSV will have:-
-1) Hostname<br/>
-2) Username<br/>
-3) Password or SSH Key Path or both<br/>
-4) Port Number (optional)<br/>
+### Python Script 
 
-Sample CSV
 
-```
-Hostname,Username,Password,SSH Key Path,Port
-172.21.202.223,animesh,abc@123,,
-172.21.202.39,animesh,,/home/vagrant/code/ptolemy/ssh/vagrant,830
-172.21.202.36,animesh,abc@123,/home/vagrant/code/ptolemy/ssh/vagrant,830
-```
 
 ## KNOWN ISSUES
 - No Support for Python 3
@@ -79,10 +55,11 @@ Copyright 2015 Juniper Networks, Inc. under the [Apache License](LICENSE)
 ## CONTRIBUTORS
 	
   - [Rob Cameron](https://github.com/RobWC)
+  - [Kurt Bales](https://github.com/kwbales)
   - [Animesh Kumar](https://github.com/animesh-kumar)
 
 ## THANKS
 
-Developing this tool wouldn't have been possible without [Python](https://www.python.org), [Junos PyEz](https://github.com/Juniper/py-junos-eznc), [Graphviz](http://www.graphviz.org), [PyGraphviz](http://pygraphviz.github.io),[AngularJS](https://angularjs.org), [JQuery](https://jquery.com), [Angular-Xeditable](http://vitalets.github.io/angular-xeditable/) and [jQuery.panzoom](http://timmywil.github.io/jquery.panzoom/)
+Developing this tool wouldn't have been possible without [Python](https://www.python.org), [Junos PyEz](https://github.com/Juniper/py-junos-eznc), [Graphviz](http://www.graphviz.org), [PyGraphviz](http://pygraphviz.github.io),[AngularJS](https://angularjs.org), [JQuery](https://jquery.com), [Angular-Xeditable](http://vitalets.github.io/angular-xeditable/) and [jQuery.panzoom](http://timmywil.github.io/jquery.panzoom/).
 
 
