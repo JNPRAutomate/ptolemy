@@ -23,10 +23,9 @@ Uncheck Global Configuration and Choose output formats and Log Types
 
 #### Generating graph from an existing template
 ##### Step 1: Switch on Develop Using Existing Template
-![Click on Build configuaration to start building a new configuration](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Step1.png)
+![Click on Build configuaration to start building a new configuration](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Template_Step1.png)
 
 ##### Step 2: Choose an existing template built from configurations used earlier or made using Sample Template.
-![Click on Choose File for Browse Template to select the template file consiting of an already existing configuration.](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Template_Step1.png)
 
 ##### Step 3: Click on Generate Graph button
-![Click on Generate graph to finish graph generation](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Template_Step2and3.png)
+![Click on Choose File for Browse Template to select the template file consiting of an already existing configuration and then Click on Generate graph to finish graph generation](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Template_Step2and3.png)
