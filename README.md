@@ -1,6 +1,6 @@
 # PTOLEMY - THE NETWORK CARTOGRAPHER
 
-The repository is under active development.  If you take a clone, you are getting the latest, and perhaps not entirely stable code.
+This repository is under active development.  If you take a clone, you are getting the latest, and perhaps not entirely stable code.
 
 
 
@@ -10,7 +10,7 @@ The repository is under active development.  If you take a clone, you are gettin
 
 ## ABOUT
 
-_Ptolemy_ is a Python Library and Web Tool for [LLDP](https://en.wikipedia.org/wiki/Link_Layer_Discovery_Protocol) network visualization tool. This tool represents the LLDP networks in terms of bidirectional network graph diagrams showing various connections and interfaces between the devices and giving a high level overview of the network. Mapping an entire network topology into a diagram is a tedious task and might take hours and various licensed tools to be done manually. Editing these diagrams once the network topology changes gets even more tedious and time consuming foe very complex networks. We have tried to automate this process and provide customers with an ***open source*** and easy to use tool to map a topology within minutes and few simple steps. The user is ***NOT*** required: (a) to be a "Software Programmer™", (b) have sophisticated knowledge of Junos, or (b) have a complex understanding of the Junos XML API.  
+_Ptolemy_ is a Python Library and Web Tool for [LLDP](https://en.wikipedia.org/wiki/Link_Layer_Discovery_Protocol) network visualization tool. This tool represents the LLDP networks in terms of bidirectional network graph diagrams showing various connections and interfaces between the devices and giving a high level overview of the network. Mapping an entire network topology into a diagram is a tedious task and might take hours and various licensed tools to be done manually. Editing these diagrams once the network topology changes gets even more tedious and time consuming foe very complex networks. We have tried to automate this process and provide customers with an ***open source*** and easy to use tool to map a topology within minutes and few simple steps.
 
 This library was built for two types of users:
 
@@ -72,7 +72,7 @@ Hostname,Username,Password,SSH Key Path,Port
 - No Support for Python 3
 - Issues with graphviz-2.38 and 2.39
 
-## COPYRIGHTS and LICENSE
+## COPYRIGHTS AND LICENSE
 
 Copyright 2015 Juniper Networks, Inc. under the [Apache License](LICENSE)
   
