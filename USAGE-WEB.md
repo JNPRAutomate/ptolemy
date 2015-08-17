@@ -76,35 +76,30 @@ Sample Template:-
 		{
 			"hostname": "cdbu-sol-vcf-5100-24q-01.dcbg.juniper.net",
 			"username": "root",
-			"password": "Embe1mpls",
+			"password": "admin",
 			"path": "",
-			"port": " ",
-			"$$hashKey": "object:42"
+			"port": ""
 		},
 		{
 			"hostname": "cdbu-sol-vcf-5100-48s-05.dcbg.juniper.net",
 			"username": "root",
-			"password": "Embe1mpls",
+			"password": "admin",
 			"path": "",
-			"port": "    ",
-			"$$hashKey": "object:43"
+			"port": ""
 		},
 		{
 			"hostname": "cdbu-sol-vcf-5100-48s-06.dcbg.juniper.net",
 			"username": "root",
-			"password": "Embe1mpls",
+			"password": "admin",
 			"path": "",
-			"port": "",
-			"$$hashKey": "object:44"
+			"port": ""
 		},
 		{
 			"hostname": "cdbu-sol-vcf-5100-24q-02.dcbg.juniper.net",
 			"username": "root",
-			"password": "Embe1mpls",
+			"password": "admin",
 			"path": "",
-			"port": "",
-			"isNew": false,
-			"$$hashKey": "object:63"
+			"port": ""
 		}
 	],
 	"Filename": "lldp_graph"
