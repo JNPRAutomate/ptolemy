@@ -38,3 +38,11 @@ Uncheck Global Configuration and Choose output formats and Log Types
 ##### Step 3: Click on Generate Graph button
 ![Click on Choose File for Browse Template to select the template file consiting of an already existing configuration and then Click on Generate graph to finish graph generation](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Template_Step2and3.png)
 
+
+
+### Output and Logs
+![Output](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Output_1.png)
+
+Global Logs
+![Logs](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Output_2.png)
+
