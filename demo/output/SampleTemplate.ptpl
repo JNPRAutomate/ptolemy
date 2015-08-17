@@ -1,0 +1,45 @@
+{
+	"Global Credentials": "None",
+	"Output Formats": [
+		"DOT",
+		"JSON",
+		"SVG"
+	],
+	"Logs": "Global",
+	"Connection Details": [
+		{
+			"hostname": "cdbu-sol-vcf-5100-24q-01.dcbg.juniper.net",
+			"username": "root",
+			"password": "Embe1mpls",
+			"path": "",
+			"port": " ",
+			"$$hashKey": "object:42"
+		},
+		{
+			"hostname": "cdbu-sol-vcf-5100-48s-05.dcbg.juniper.net",
+			"username": "root",
+			"password": "Embe1mpls",
+			"path": "",
+			"port": "    ",
+			"$$hashKey": "object:43"
+		},
+		{
+			"hostname": "cdbu-sol-vcf-5100-48s-06.dcbg.juniper.net",
+			"username": "root",
+			"password": "Embe1mpls",
+			"path": "",
+			"port": "",
+			"$$hashKey": "object:44"
+		},
+		{
+			"hostname": "cdbu-sol-vcf-5100-24q-02.dcbg.juniper.net",
+			"username": "root",
+			"password": "Embe1mpls",
+			"path": "",
+			"port": "",
+			"isNew": false,
+			"$$hashKey": "object:63"
+		}
+	],
+	"Filename": "lldp_graph"
+}

@@ -49,6 +49,69 @@ Read the details about how a valid [CSV File](VALID-CSV.md) will look like.
 ### Output and Logs
 ![Output](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Output_1.png)
 
+#### Sample Outputs
+
+A Sample output in SVG Format
+![SVG Format Output](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.svg)
+
+Download Sample Outputs:-
+1. [DOT](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.dot)
+1. [SVG](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.svg)
+2. [JSON](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleOutput.json)
+
+Sample Template:-
+
+[Dowload Sample Template](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/output/SampleTemplate.ptpl)
+
+'''
+{
+	"Global Credentials": "None",
+	"Output Formats": [
+		"DOT",
+		"JSON",
+		"SVG"
+	],
+	"Logs": "Global",
+	"Connection Details": [
+		{
+			"hostname": "cdbu-sol-vcf-5100-24q-01.dcbg.juniper.net",
+			"username": "root",
+			"password": "Embe1mpls",
+			"path": "",
+			"port": " ",
+			"$$hashKey": "object:42"
+		},
+		{
+			"hostname": "cdbu-sol-vcf-5100-48s-05.dcbg.juniper.net",
+			"username": "root",
+			"password": "Embe1mpls",
+			"path": "",
+			"port": "    ",
+			"$$hashKey": "object:43"
+		},
+		{
+			"hostname": "cdbu-sol-vcf-5100-48s-06.dcbg.juniper.net",
+			"username": "root",
+			"password": "Embe1mpls",
+			"path": "",
+			"port": "",
+			"$$hashKey": "object:44"
+		},
+		{
+			"hostname": "cdbu-sol-vcf-5100-24q-02.dcbg.juniper.net",
+			"username": "root",
+			"password": "Embe1mpls",
+			"path": "",
+			"port": "",
+			"isNew": false,
+			"$$hashKey": "object:63"
+		}
+	],
+	"Filename": "lldp_graph"
+}
+'''
+
+
 Global Logs
 ![Logs](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Output_2.png)
 

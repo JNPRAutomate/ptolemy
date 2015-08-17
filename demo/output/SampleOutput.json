@@ -1,0 +1,115 @@
+{
+    "cdbu-sol-vcf-5100-24q-01": {
+        "Destination System: cdbu-sol-vcf-5100-24q-02": {
+            "Local Port Id": "et-0/0/15", 
+            "Remote Port Id": "et-0/0/15", 
+            "Remote System Name": "cdbu-sol-vcf-5100-24q-02"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-02": {
+            "Local Port Id": "et-0/0/1", 
+            "Remote Port Id": "et-0/0/48", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-02"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-04": {
+            "Local Port Id": "et-0/0/3", 
+            "Remote Port Id": "et-0/0/48", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-04"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-05": {
+            "Local Port Id": "et-0/0/4", 
+            "Remote Port Id": "et-0/0/48", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-05"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-06": {
+            "Local Port Id": "et-0/0/5", 
+            "Remote Port Id": "et-0/0/48", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-06"
+        }
+    }, 
+    "cdbu-sol-vcf-5100-24q-02": {
+        "Destination System: cdbu-sol-vcf-5100-24q-01": {
+            "Local Port Id": "et-0/0/15", 
+            "Remote Port Id": "et-0/0/15", 
+            "Remote System Name": "cdbu-sol-vcf-5100-24q-01"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-01": {
+            "Local Port Id": "et-0/0/0", 
+            "Remote Port Id": "et-0/0/49", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-01"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-02": {
+            "Local Port Id": "et-0/0/1", 
+            "Remote Port Id": "et-0/0/49", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-02"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-04": {
+            "Local Port Id": "et-0/0/3", 
+            "Remote Port Id": "et-0/0/49", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-04"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-05": {
+            "Local Port Id": "et-0/0/4", 
+            "Remote Port Id": "et-0/0/49", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-05"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-06": {
+            "Local Port Id": "et-0/0/5", 
+            "Remote Port Id": "to R11 - R23_R11_1", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-06"
+        }
+    }, 
+    "cdbu-sol-vcf-5100-48s-05": {
+        "Destination System: cdbu-sol-vcf-5100-24q-01": {
+            "Local Port Id": "et-0/0/48", 
+            "Remote Port Id": "et-0/0/4", 
+            "Remote System Name": "cdbu-sol-vcf-5100-24q-01"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-24q-02": {
+            "Local Port Id": "et-0/0/49", 
+            "Remote Port Id": "et-0/0/4", 
+            "Remote System Name": "cdbu-sol-vcf-5100-24q-02"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-06": {
+            "Local Port Id": "xe-0/0/29", 
+            "Remote Port Id": "xe-0/0/29", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-06"
+        }, 
+        "Destination System: qfx5100-10": {
+            "Local Port Id": "et-0/0/50", 
+            "Remote Port Id": "et-0/0/4", 
+            "Remote System Name": "qfx5100-10"
+        }, 
+        "Destination System: qfx5100-11": {
+            "Local Port Id": "et-0/0/51", 
+            "Remote Port Id": "et-0/0/4", 
+            "Remote System Name": "qfx5100-11"
+        }
+    }, 
+    "cdbu-sol-vcf-5100-48s-06": {
+        "Destination System: cdbu-sol-vcf-5100-24q-01": {
+            "Local Port Id": "et-0/0/48", 
+            "Remote Port Id": "et-0/0/5", 
+            "Remote System Name": "cdbu-sol-vcf-5100-24q-01"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-24q-02": {
+            "Local Port Id": "et-0/0/49", 
+            "Remote Port Id": "et-0/0/5", 
+            "Remote System Name": "cdbu-sol-vcf-5100-24q-02"
+        }, 
+        "Destination System: cdbu-sol-vcf-5100-48s-05": {
+            "Local Port Id": "xe-0/0/29", 
+            "Remote Port Id": "xe-0/0/29", 
+            "Remote System Name": "cdbu-sol-vcf-5100-48s-05"
+        }, 
+        "Destination System: qfx5100-10": {
+            "Local Port Id": "et-0/0/50", 
+            "Remote Port Id": "et-0/0/5", 
+            "Remote System Name": "qfx5100-10"
+        }, 
+        "Destination System: qfx5100-11": {
+            "Local Port Id": "et-0/0/51", 
+            "Remote Port Id": "et-0/0/5", 
+            "Remote System Name": "qfx5100-11"
+        }
+    }
+}
