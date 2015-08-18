@@ -5,7 +5,7 @@ This repository is under active development.  If you take a clone, you are getti
 ## Table of Contents
 1. [About](#about)
 2. [Demo](#demo)
-   1. [Demo Video for Web UI in Action]()
+   1. [Demo Video for Web UI in Action](https://www.youtube.com/watch?v=IGhx69Q5ado)
    2. [Demo Video for Python Script in Action]()
 3. [Installation](#installation)
    1. [Prerequisites](#prerequisites)
@@ -27,7 +27,7 @@ This library has two types of flavors:
  2. Open and Extensible Python Script
 
 ## Demo
-1. [Demo Video for Web UI in Action]()
+1. [Demo Video for Web UI in Action](https://www.youtube.com/watch?v=IGhx69Q5ado)
 2. [Demo Video for Python Script in Action]()
 
 ## Installation
