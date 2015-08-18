@@ -702,7 +702,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     for (index = 1; index < $scope.fileArray.length; index++) {
       var tempArr = $scope.fileArray[index].split(",")
       //Run another for loop to build the configuration
-      if (tempArr[0] && tempArr[1]) {
+      if ((!$scope.global_credentials && tempArr[0] && tempArr[1]) || ($scope.global_credentials && tempArr[0])) {
         $scope.connectionDetails.push({
           hostname: tempArr[0],
           username: tempArr[1],

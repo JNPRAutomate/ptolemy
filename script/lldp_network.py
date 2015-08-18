@@ -35,13 +35,28 @@ class L1NetworkFlow():
 
 		# Logger Setup
 		self.logger = logging.getLogger('Ptolemy')
+
+		# create console handler and set level to debug
+		ch = logging.StreamHandler()
+		ch.setLevel(logging.DEBUG)
+
 		logFileName = self.get_generated_filename("","log")
+		# Add File Handler for Logging
 		hdlr = logging.FileHandler(logFileName)
+		hdlr.setLevel(logging.DEBUG)
+		#create a formatter
 		formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+		# Add formatters to the Handlers
 		hdlr.setFormatter(formatter)
+		ch.setFormatter(formatter)
+
+		# Add Handlers to the Formatter
 		self.logger.addHandler(hdlr) 
+		self.logger.addHandler(ch)
 		self.logger.setLevel(logging.DEBUG)
 		self.logger.info("Welcome to Ptolemy - The Network Cartographer")
+
+		# pprint(device_data)
 
 		for connection in device_data:
 			self.logger.info("------------------------------------------------------------------------")
@@ -69,8 +84,8 @@ class L1NetworkFlow():
 				self.live_nodes.add(host)
 				# Temporary and won't work in actual scenario. Find a way to work with MAC Addresses or something that is unique in actual campus network for devices
 				self.logger.info("Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connected")
-			except:
-				self.logger.error(traceback.format_exc)
+			except Exception, e:
+				self.logger.error(e)
 				self.logger.error("Host: "+connection["Hostname"]+" User: "+connection["Username"]+" connection failed")
 				continue
 				
@@ -292,18 +307,6 @@ class L1NetworkFlow():
 		graph.draw(graph_file_name,prog='dot') 
 		self.logger.info( '' )
 		self.logger.info( "Wrote graph to DOT SVG file "+graph_file_name )
-
-		# Write the graph to a PDF file
-		graph_file_name = self.get_generated_filename("graph_","pdf")
-		graph.draw(graph_file_name,prog='dot') 
-		self.logger.info( '' )
-		self.logger.info( "Wrote graph to PDF SVG file "+graph_file_name )
-
-		# Write the graph to a PNG file
-		graph_file_name = self.get_generated_filename("graph_","png")
-		graph.draw(graph_file_name,prog='dot')
-		self.logger.info( '' )
-		self.logger.info( "Wrote graph to PDF SVG file "+graph_file_name )
 		
 
 
