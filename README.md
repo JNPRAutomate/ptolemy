@@ -4,16 +4,19 @@ This repository is under active development.  If you take a clone, you are getti
 
 ## Table of Contents
 1. [About](#about)
-2. [Installation](#installation)
+2. [Demo](#demo)
+   1. [Demo Video for Web UI in Action]()
+   2. [Demo Video for Python Script in Action]()
+3. [Installation](#installation)
    1. [Prerequisites](#prerequisites)
    2. [Setting up Ptolemy](#setting-up-ptolemy)
-3. [Usage](#usage)
+4. [Usage](#usage)
    1. [Web UI](#web-ui)
    2. [Python Script](#python-script)
-4. [Known Issues](#known-issues)
-5. [Copyrights and License](#copyrights-and-license)
-6. [Contributors](#contributors)
-7. [Thanks and Credits](#thanks-and-credits)
+5. [Known Issues](#known-issues)
+6. [Copyrights and License](#copyrights-and-license)
+7. [Contributors](#contributors)
+8. [Thanks and Credits](#thanks-and-credits)
 
 ## About
 
@@ -26,6 +29,9 @@ This library was built for two types of users:
 
 ### Open and Extensible Python Script
 
+## Demo
+1. [Demo Video for Web UI in Action]()
+2. [Demo Video for Python Script in Action]()
 
 ## Installation
 
@@ -52,12 +58,12 @@ NOTE :-
 
 ### Web UI
 
-[Get Started with Ptolemy using the Web UI](USAGE-WEB.md)
+[Getting Started with Ptolemy using the Web UI](USAGE-WEB.md)
 
 
 ### Python Script 
 
-[Get Started with Ptolemy using the Python Scipt](USAGE-SCRIPT.md)
+[Getting Started with Ptolemy using the Python Scipt](USAGE-SCRIPT.md)
 
 
 ## Known Issues
