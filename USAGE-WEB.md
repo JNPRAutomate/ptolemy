@@ -25,9 +25,9 @@ Uncheck Global Configuration and Choose output formats and Log Types
 ##### Step 3: Enter the device details by Uploading a CSV and/or editing the Device Credential Table
 
 
----
+***
 Read the details about how a valid [CSV File](VALID-CSV.md) will look like.
----
+***
 
 ![Choose a CSV File with Connection details for the devices and/or Click edit to make changes to the existing table by add, removing and editing device credentials.](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Build_Step3.png)
 
