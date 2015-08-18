@@ -32,10 +32,9 @@ git clone https://github.com/JNPRAutomate/ptolemy.git
 
 ## USAGE
 
-
----
-**NOTE** : Devices which the script attempts to connect must have NETCONF and LLDP enabled on the specified port or the default port
----
+***
+NOTE : Devices which the script attempts to connect must have NETCONF and LLDP enabled on the specified port or the default port
+***
 
 ### Web UI
 
