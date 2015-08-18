@@ -48,9 +48,9 @@ git clone https://github.com/JNPRAutomate/ptolemy.git
 ## Usage
 
 ***
-NOTE :-
-1. Devices which the script attempts to connect must have NETCONF and LLDP enabled on the specified port or the default port
-2. Web UI works best with Google Chrome Browser.
+__NOTE__
+ 1. Devices which the script attempts to connect must have NETCONF and LLDP enabled on the specified port or the default port
+ 2. Web UI works best with Google Chrome Browser.
 ***
 
 ### Web UI
