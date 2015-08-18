@@ -50,6 +50,8 @@ git clone https://github.com/JNPRAutomate/ptolemy.git
 ***
 __NOTE__
  1. Devices which the script attempts to connect must have NETCONF and LLDP enabled on the specified port or the default port
+    1. [Checking if NETCONF is enabled and configuring it if it's not enabled on a device](http://www.juniper.net/techpubs/en_US/junos-pyez1.0/topics/task/troubleshooting/junos-pyez-connection-errors-troubleshooting.html)
+    2. [Checking if LLDP is enabled and configuring it if it's not enabled on a device]()
  2. Web UI works best with Google Chrome Browser.
  
 ***
