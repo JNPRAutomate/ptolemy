@@ -2,6 +2,10 @@
 
 This repository is under active development.  If you take a clone, you are getting the latest, and perhaps not entirely stable code.
 
+## Table of Contents
+* [ABOUT](#about)
+* [INSTALLATION](#installation)
+
 
 ## ABOUT
 
