@@ -22,12 +22,9 @@ This repository is under active development.  If you take a clone, you are getti
 
 _Ptolemy_ is a Python Library and Web Tool for [LLDP](https://en.wikipedia.org/wiki/Link_Layer_Discovery_Protocol) network visualization tool. This tool represents the LLDP networks in terms of bidirectional network graph diagrams showing various connections and interfaces between the devices and giving a high level overview of the network. Mapping an entire network topology into a diagram is a tedious task and might take hours and various licensed tools to be done manually. Editing these diagrams once the network topology changes gets even more tedious and time consuming foe very complex networks. We have tried to automate this process and provide customers with an ***open source*** and easy to use tool to map a topology within minutes and few simple steps.
 
-This library was built for two types of users:
-
-### Easy to Use Web Tool
-
-
-### Open and Extensible Python Script
+This library has two types of flavors:
+ 1. An Easy to Use Web Tool
+ 2. Open and Extensible Python Script
 
 ## Demo
 1. [Demo Video for Web UI in Action]()
