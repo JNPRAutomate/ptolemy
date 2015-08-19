@@ -14,13 +14,15 @@ def main(argv):
 		#usage()
 		sys.exit(2)
 	for opt,args in opts:
+		print "opt: "+ opt
+		print "args: "+args
 		if opt in ("-h", "--help"):
 			#usage()
 			sys.exit()
 		elif opt in ("-i","--in"):
 			user_arguments["CSV File Path"] = args
 		elif opt in ("-u","--user"):
-			user_arguments["User"] = args
+			user_arguments["Username"] = args
 		elif opt in ("-p","--password"):
 			user_arguments["Password"] = args
 		elif opt in ("-o","--out"):

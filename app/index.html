@@ -517,7 +517,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 
     hiddenElement.href = 'data:attachment/json;charset=utf8,'+ encodeURI(JSON.stringify($scope.configuration,null, "\t"));
     hiddenElement.target = '_blank';
-    hiddenElement.download = 'template.ptpl';
+    hiddenElement.download = 'configuration.ptpl';
     hiddenElement.click();
 
   }
