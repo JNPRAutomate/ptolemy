@@ -5,7 +5,7 @@ This repository is under active development.  If you take a clone, you are getti
 ## Table of Contents
 1. [About](#about)
 2. [Demo](#demo)
-   1. [Demo Video for Web UI in Action]()
+   1. [Demo Video for Web UI in Action](https://www.youtube.com/watch?v=IGhx69Q5ado)
    2. [Demo Video for Python Script in Action]()
 3. [Installation](#installation)
    1. [Prerequisites](#prerequisites)
@@ -27,7 +27,8 @@ This library has two types of flavors:
  2. Open and Extensible Python Script
 
 ## Demo
-1. [Demo Video for Web UI in Action]()
+1. [Demo Video for Web UI in Action](https://www.youtube.com/watch?v=IGhx69Q5ado)
+  * [![Demo Video for Web UI in Action](http://img.youtube.com/vi/IGhx69Q5ado/0.jpg)](https://www.youtube.com/watch?v=IGhx69Q5ado)
 2. [Demo Video for Python Script in Action]()
 
 ## Installation
@@ -51,7 +52,6 @@ git clone https://github.com/JNPRAutomate/ptolemy.git
 __NOTE__
  1. Devices which the script attempts to connect must have NETCONF and LLDP enabled on the specified port or the default port
     1. [Checking if NETCONF is enabled and configuring it if it's not enabled on a device](http://www.juniper.net/techpubs/en_US/junos-pyez1.0/topics/task/troubleshooting/junos-pyez-connection-errors-troubleshooting.html)
-    2. [Checking if LLDP is enabled and configuring it if it's not enabled on a device]()
  2. Web UI works best with Google Chrome Browser.
  
 ***

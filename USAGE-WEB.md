@@ -2,6 +2,12 @@
 
 In Web UI, you can start with building a configuration consisting of all the parameters which will be needed to run the application successfully. The configuration has two flavors, one with global configuration by which, you can connect to all the devices using one set of credential (i.e., username and password) or entering them separately for every device.
 
+##### Step 0 : If you are running this application on your local system, starting the server will be the first step.
+```
+# First make sure that you are in the ptolemy directory
+cd app
+python httpserver.py
+```
 
 #### Building a new Configuration for first time users
 ##### Step 1: Start building a new configuration
@@ -19,9 +25,9 @@ Uncheck Global Configuration and Choose output formats and Log Types
 ##### Step 3: Enter the device details by Uploading a CSV and/or editing the Device Credential Table
 
 
----
+***
 Read the details about how a valid [CSV File](VALID-CSV.md) will look like.
----
+***
 
 ![Choose a CSV File with Connection details for the devices and/or Click edit to make changes to the existing table by add, removing and editing device credentials.](https://github.com/JNPRAutomate/ptolemy/blob/master/demo/screenshots/web-ui/Build_Step3.png)
 
