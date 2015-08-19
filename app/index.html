@@ -180,7 +180,7 @@
                     <md-content layout-padding layout="row" layout-sm="column" > 
                     <!-- ng-show="sshCredentials" -->
                         <label style="margin-bottom:20px">Connection Details</label>
-                        <input type="file" id="connection_details" accept=".csv" style="margin-bottom:20px;margin-left:10px" on-read-file="loadConnectionDetails($fileContent)">
+                        <input type="file" id="connection_details" accept=".csv" style="margin-bottom:20px;margin-left:10px" on-read-file="loadConnectionDetails($fileContent, $event)">
                     </md-content>
 
 
@@ -491,13 +491,18 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
             "username" : $scope.global_user.username,
             "password" : $scope.global_user.password
           };
-          $scope.configuration.push({
-            "Global Credentials" : $scope.user_credentials,
-            "Output Formats" : $scope.selected_output_formats,
-            "Logs" : $scope.logs,
-            "Connection Details": "",
-            "Filename": $scope.Filename
-          });
+          // Adding try catch as a hack to handle back button from generate graph smoothly
+          try{
+            $scope.configuration.push({
+              "Global Credentials" : $scope.user_credentials,
+              "Output Formats" : $scope.selected_output_formats,
+              "Logs" : $scope.logs,
+              "Connection Details": "",
+              "Filename": $scope.Filename
+            });
+          } catch(error){
+            console.log(error);
+          }
         } else {
           $scope.configuration.push({
             "Global Credentials" : 'None',
@@ -694,24 +699,37 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     $scope.isTemplateDisabled = !switchValue
   }
 
-  $scope.loadConnectionDetails = function($fileContent){
+  $scope.loadConnectionDetails = function($fileContent, ev){
     //Parse the file content and put it into template details
     $scope.connectionDetails = [];
     $scope.fileArray = $fileContent.split("\n");
+    flag = false;
     // Ignore Line 1 since it will always contain the Headers
     for (index = 1; index < $scope.fileArray.length; index++) {
       var tempArr = $scope.fileArray[index].split(",")
       //Run another for loop to build the configuration
-      if ((!$scope.global_credentials && tempArr[0] && tempArr[1]) || ($scope.global_credentials && tempArr[0])) {
-        $scope.connectionDetails.push({
+      $scope.connectionDetails.push({
           hostname: tempArr[0],
           username: tempArr[1],
           password: tempArr[2],
           path: tempArr[3],
           port: tempArr[4]
-        });
+      });
+      if (!$scope.global_credentials && (!tempArr[0] || !tempArr[1])) {
+        flag = true;
       };
     }
+    if (flag) {
+      $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.body))
+            .title('User Credentials Incomplete')
+            .content('You have not chosen to use global user credentials and few of the the devices are missing username and/or passwords. Please enter valid credentials.')
+            .ariaLabel('User Credentials Incomplete')
+            .ok('OK')
+            .targetEvent(ev)
+        );
+    };
     $scope.connectionDetailsUploaded = true;
   };
 
