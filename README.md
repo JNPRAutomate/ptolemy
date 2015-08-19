@@ -28,6 +28,7 @@ This library has two types of flavors:
 
 ## Demo
 1. [Demo Video for Web UI in Action](https://www.youtube.com/watch?v=IGhx69Q5ado)
+  * [![Demo Video for Web UI in Action](http://img.youtube.com/vi/IGhx69Q5ado/0.jpg)](https://www.youtube.com/watch?v=IGhx69Q5ado)
 2. [Demo Video for Python Script in Action]()
 
 ## Installation
