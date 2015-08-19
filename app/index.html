@@ -319,50 +319,6 @@
                         })();
                       </script>
                     </section>
-
-                   <!-- <section>
-                    <div class="parent">
-                      <div class="buttons">
-                          <button class="zoom-in">Zoom In</button>
-                          <button class="zoom-out">Zoom Out</button>
-                          <input type="range" class="zoom-range">
-                          <button class="reset">Reset</button>
-                      </div>
-
-                      <div class="panzoom" id="svg_container" style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
-                      </div>
-                    </div>
-                    
-                    <script>
-                      (function() {
-                        var $section = $('section').first();
-                        $section.find('.panzoom').panzoom({
-                          $zoomIn: $section.find(".zoom-in"),
-                          $zoomOut: $section.find(".zoom-out"),
-                          $zoomRange: $section.find(".zoom-range"),
-                          $reset: $section.find(".reset")
-                        });
-                      })();
-                    </script>
-                  </section> -->
-
-
-
-
-
-
-
-                  <!-- View to Show the results -->
-                  <!-- <div id='content_view' style="overflow:auto;height:60%;width:100%;margin-top:20px;margin-bottom:10px">
-                  <button class="zoom-in">Zoom In</button>
-                  <button class="zoom-out">Zoom Out</button>
-                  <input type="range" class="zoom-range">
-                  <button class="reset">Reset</button>
-                  <div id="svg_container"></div>
-                  </div> -->
-
-
-
                 </div>
               </md-card-content>
           </md-card>
@@ -696,7 +652,8 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
   }
 
   $scope.onTemplateSwitchChange = function(switchValue) {
-    $scope.isTemplateDisabled = !switchValue
+    $scope.isTemplateDisabled = !switchValue;
+    $scope.templateUploaded = !$scope.isTemplateDisabled;
   }
 
   $scope.loadConnectionDetails = function($fileContent, ev){
