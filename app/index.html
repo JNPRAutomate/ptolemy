@@ -75,15 +75,15 @@
                 Develop using Existing Template</md-switch>
                 <span>
                 <label for="file-input" style="margin-left:20px">Browse Template</label>  
-                <input id="file-input" style="margin-left:10px" type="file" accept=".ptpl" ng-disabled="isTemplateDisabled" on-read-file="loadTemplate($fileContent)">
+                <input id="file-input" style="margin-left:10px" type="file" accept=".ptpl" ng-disabled="isTemplateDisabled" on-read-file="loadTemplate($fileContent, $event)">
 
                 <md-button class="md-raised md-primary" ng-click="downloadSampleTemplate()">Download Sample Template</md-button>
                 </span>
                 <div ng-show="templateUploaded == true">
                   <h3>Template</h3>
                     <md-checkbox md-no-ink ng-init="showPasswords == false" class="md-primary" ng-model="showPasswords" aria-label="Show Password" ng-true-value="true" ng-false-value="false"> Show Passwords</md-checkbox>
-                    <pre ng-show="showPasswords == true">{{ template }}</pre>
-                    <pre ng-show="showPasswords == false">{{ passwordEncodedTemplate }}</pre>
+                    <pre ng-show="showPasswords == true" style="overflow:auto;height:40%;width:100%;">{{ templateString }}</pre>
+                    <pre ng-show="showPasswords == false" style="overflow:auto;height:40%;width:100%;">{{ passwordEncodedTemplateString }}</pre>
                   <!-- </span> -->
 
                 </div>
@@ -653,7 +653,9 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
 
   $scope.onTemplateSwitchChange = function(switchValue) {
     $scope.isTemplateDisabled = !switchValue;
-    $scope.templateUploaded = !$scope.isTemplateDisabled;
+    if($scope.isTemplateDisabled){
+      $scope.templateUploaded = !$scope.isTemplateDisabled;
+    }
   }
 
   $scope.loadConnectionDetails = function($fileContent, ev){
@@ -690,17 +692,30 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDi
     $scope.connectionDetailsUploaded = true;
   };
 
-  $scope.loadTemplate = function($fileContent){
+  $scope.loadTemplate = function($fileContent, ev){
     //Parse the file content and put it into connection details
-    $scope.template = $fileContent;
-    $scope.passwordEncodedTemplate = JSON.parse($fileContent);
-    $scope.passwordEncodedTemplate["Global Credentials"]["password"] = "***";
-    for (var i = 0; i < $scope.passwordEncodedTemplate["Connection Details"].length; i++) {
-      $scope.passwordEncodedTemplate["Connection Details"][i]["password"] = "***";
-    };
-    $scope.templateString = JSON.stringify($scope.template, null, "\t");
-    $scope.passwordEncodedTemplateString = JSON.stringify($scope.passwordEncodedTemplateString, null, "\t");
-    $scope.templateUploaded = true;
+    try{
+      $scope.template = $fileContent;
+      $scope.passwordEncodedTemplate = JSON.parse($fileContent);
+      $scope.passwordEncodedTemplate["Global Credentials"]["password"] = "***";
+      for (var i = 0; i < $scope.passwordEncodedTemplate["Connection Details"].length; i++) {
+        $scope.passwordEncodedTemplate["Connection Details"][i]["password"] = "***";
+      };
+      $scope.templateString = JSON.stringify(JSON.parse($fileContent), null, "\t");
+      $scope.passwordEncodedTemplateString = JSON.stringify($scope.passwordEncodedTemplate, null, "\t");
+      $scope.templateUploaded = true;
+    } catch (error){
+      console.log(error);
+      $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.body))
+            .title('Invalid Template Upload')
+            .content('Uploaded template failed while parsing. Please make sure you have uploaded a valid template.')
+            .ariaLabel('User Credentials Incomplete')
+            .ok('OK')
+            .targetEvent(ev)
+        );
+    }
   };
 
 
