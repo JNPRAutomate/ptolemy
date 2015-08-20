@@ -30,7 +30,7 @@ This library has two types of flavors:
 1. [Demo Video for Web UI in Action](https://www.youtube.com/watch?v=IGhx69Q5ado)
   * [![Demo Video for Web UI in Action](http://img.youtube.com/vi/IGhx69Q5ado/0.jpg)](https://www.youtube.com/watch?v=IGhx69Q5ado)
 2. [Demo Video for Python Script in Action](https://www.youtube.com/watch?v=lgxYMwbHvXA)
-  * [![Demo Video for Python Script in Action](https://www.youtube.com/watch?v=lgxYMwbHvXA/0.jpg)](https://www.youtube.com/watch?v=lgxYMwbHvXA)
+  * [![Demo Video for Python Script in Action](http://img.youtube.com/vi/lgxYMwbHvXA/0.jpg)](https://www.youtube.com/watch?v=lgxYMwbHvXA)
 
 ## Installation
 
