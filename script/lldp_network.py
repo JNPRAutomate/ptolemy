@@ -21,10 +21,12 @@ class L1NetworkFlow():
 		self.live_nodes = set()
 		self.filename = ""
 		self.useCurrentTimeStamp = True
+		self.externalFlag = False
 
 	def get_network_flow_external(self, device_data, filename):
 		self.receivedfilename = filename
 		self.useCurrentTimeStamp = False
+		self.externalFlag = True
 		self.get_network_flow(device_data)
 
 	def get_network_flow(self, device_data):
@@ -52,7 +54,10 @@ class L1NetworkFlow():
 
 		# Add Handlers to the Formatter
 		self.logger.addHandler(hdlr) 
-		self.logger.addHandler(ch)
+		# Use the Stream Handler only when it's not called from app
+		if not self.externalFlag:
+			self.logger.addHandler(ch)
+		
 		self.logger.setLevel(logging.DEBUG)
 		self.logger.info("Welcome to Ptolemy - The Network Cartographer")
 
